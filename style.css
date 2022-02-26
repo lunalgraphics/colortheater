@@ -44,6 +44,11 @@ input[type=number] {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+input[type=number]:hover {
+    border: 1px solid #A1A1A1;
+    color: #A1A1A1;
+}
+
 input[type=number]:focus {
     border: 1px solid white;
     color: white;
