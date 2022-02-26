@@ -32,3 +32,25 @@ for (var i = 0; i < 4; i++) {
         });
     }
 }
+
+fetch("presets.json").then(response => response.json()).then(function(presets) {
+    for (var preset in presets) {
+        var option = document.createElement("option");
+        option.innerText = preset;
+        option.value = presets[preset];
+        document.querySelector("#colorpresetselect").appendChild(option);
+    }
+    document.querySelector("#colorpresetselect").addEventListener("input", function() {
+        var matrix_split = this.value.split("\n");
+        for (var i = 0; i < matrix_split.length; i++) {
+            matrix_split[i] = matrix_split[i].split(" ");
+        }
+        colorMatrixValues = matrix_split;
+        for (var i = 0; i < 4; i++) {
+            for (var j = 0; j < 5; j++) {
+                document.querySelector(`#cmatrixinput${i}${j}`).value = matrix_split[i][j];
+            }
+        }
+        document.querySelector("#colorgrade feColorMatrix").setAttribute("values", arraytostring(colorMatrixValues));
+    });
+});

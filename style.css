@@ -1,5 +1,6 @@
 body {
     background-color: #222222;
+    user-select: none;
 }
 
 #previewspace {
@@ -27,14 +28,20 @@ svg {
     padding: 10px;
     box-sizing: border-box;
     border: 15px solid #222222;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #AFAFAF;
 }
 
 #controlpanel td {
     text-align: center;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-input[type=number] {
+#controlpanel i {
+    color: #CDCDCD;
+    font-size: 20px;
+}
+
+input[type=number], select {
     box-sizing: border-box;
     padding: 3px;
     outline: none!important;
@@ -44,12 +51,12 @@ input[type=number] {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-input[type=number]:hover {
+input[type=number]:hover, select:hover {
     border: 1px solid #A1A1A1;
     color: #A1A1A1;
 }
 
-input[type=number]:focus {
+input[type=number]:focus, select:focus {
     border: 1px solid white;
     color: white;
 }
