@@ -58,3 +58,6 @@ fetch("presets.json").then(response => response.json()).then(function(presets) {
 document.querySelector("#vignettefillcontrol").addEventListener("input", function() {
     document.querySelector("#vignetteRect").setAttribute("fill-opacity", this.value);
 });
+document.querySelector("#vignettecolorcontrol").addEventListener("input", function() {
+    document.querySelectorAll("#vignetteGradient stop")[1].style.stopColor = this.value;
+});
