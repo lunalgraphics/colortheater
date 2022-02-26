@@ -3,6 +3,7 @@
     <head>
         <title>color theater</title>
         <link rel="stylesheet" href="style.css" />
+        <script src="lib/rasterizer.js"></script>
     </head>
     <body>
         <div id="previewspace">
@@ -49,6 +50,9 @@
             <i>Vignette</i> <br />
             Color: <input type="color" id="vignettecolorcontrol" value="#000000" /> <br />
             Amount: <input type="number" id="vignettefillcontrol" value="0" min="0" max="1" step="0.01" />
+        </div>
+        <div id="bottompanel">
+            <button id="exportbutton" style="padding-left: 10px; padding-right: 10px;">Export as PNG</button>
         </div>
         <script src="code.js"></script>
     </body>

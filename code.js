@@ -61,3 +61,12 @@ document.querySelector("#vignettefillcontrol").addEventListener("input", functio
 document.querySelector("#vignettecolorcontrol").addEventListener("input", function() {
     document.querySelectorAll("#vignetteGradient stop")[1].style.stopColor = this.value;
 });
+
+document.querySelector("#exportbutton").addEventListener("click", function() {
+    rasterize(document.querySelector("svg")).then(function(outputURI) {
+        var a = document.createElement("a");
+        a.href = outputURI;
+        a.download = "myimage.png";
+        a.click();
+    });
+});
