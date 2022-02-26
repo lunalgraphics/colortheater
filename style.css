@@ -24,3 +24,23 @@ svg {
     box-sizing: border-box;
     border: 15px solid white;
 }
+
+#controlpanel td {
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+input[type=number] {
+    box-sizing: border-box;
+    padding: 3px;
+    outline: none!important;
+    border: 1px solid grey;
+    background-color: #222222;
+    color: grey;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+input[type=number]:focus {
+    border: 1px solid white;
+    color: white;
+}
