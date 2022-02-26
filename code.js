@@ -66,7 +66,7 @@ document.querySelector("#exportbutton").addEventListener("click", function() {
     rasterize(document.querySelector("svg")).then(function(outputURI) {
         var a = document.createElement("a");
         a.href = outputURI;
-        a.download = "myimage.png";
+        a.download = "edited-production.png";
         a.click();
     });
 });
