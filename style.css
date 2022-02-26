@@ -30,6 +30,7 @@ svg {
     border: 15px solid #222222;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #AFAFAF;
+    overflow-y: auto;
 }
 
 #controlpanel td {
@@ -88,4 +89,35 @@ input[type=number]:focus, select:focus, input[type=color]:focus, button:focus {
 
 input[type=file] {
     display: none;
+}
+
+@media only screen and (max-width: 555px) {
+    #previewspace {
+        width: 100vw;
+        height: 100vw;
+    }
+    #controlpanel {
+        top: 100vw;
+        width: 100vw;
+        height: calc(100vh - 100vw - 69px);
+    }
+    #bottompanel {
+        width: 100vw;
+    }
+}
+
+::-webkit-scrollbar {
+    width: 6.9px;
+}
+
+::-webkit-scrollbar-track {
+    opacity: 0;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #00000030;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #00000020;
 }

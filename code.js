@@ -64,10 +64,17 @@ document.querySelector("#vignettecolorcontrol").addEventListener("input", functi
 
 document.querySelector("#exportbutton").addEventListener("click", function() {
     rasterize(document.querySelector("svg")).then(function(outputURI) {
-        var a = document.createElement("a");
-        a.href = outputURI;
-        a.download = "edited-production.png";
-        a.click();
+        switch ((new URLSearchParams(location.search)).get("portal")) {
+            case "photopea":
+                Photopea.runScript(window.parent, `app.open("${outputURI}", null, true)`);
+                break;
+            default:
+                var a = document.createElement("a");
+                a.href = outputURI;
+                a.download = "edited-production.png";
+                a.click();
+                break;
+        }
     });
 });
 
@@ -89,3 +96,24 @@ document.querySelector("input[type=file]").addEventListener("change", function()
 document.querySelector("#startbutton").addEventListener("click", function() {
     document.querySelector("input[type=file]").click();
 });
+
+if ((new URLSearchParams(location.search)).get("portal") == "photopea") {
+    document.querySelector("#exportbutton").innerText = "Finish";
+    Photopea.runScript(window.parent, "app.activeDocument.saveToOE('png')").then(function(data) {
+        var buffer = data[0];
+        var binary = "";
+        var bytes = new Uint8Array(buffer);
+        var len = bytes.byteLength;
+        for (var i = 0; i < len; i++) {
+            binary += String.fromCharCode( bytes[ i ] );
+        }
+        var imageuri = "data:image/png," + window.btoa(binary);
+        document.querySelector("#baseImage").setAttribute("href", imageuri);
+        var image = new Image();
+        image.src = imageuri;
+        image.addEventListener("load", function() {
+            document.querySelector("svg").setAttribute("viewBox", `0 0 ${this.width} ${this.height}`);
+            document.querySelector("#welcomescreen").remove();
+        });
+    });
+}
