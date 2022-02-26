@@ -21,7 +21,7 @@ for (var i = 0; i < 4; i++) {
         var input = document.createElement("input");
         input.type = "number";
         if (i == j) input.value = 1; else input.value = 0;
-        input.step = "0.1";
+        if (j < 4) input.step = "0.1"; else input.step = "0.01";
         input.style.width = "100%";
         input.style.boxSizing = "border-box";
         input.id = `cmatrixinput${i}${j}`;
