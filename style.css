@@ -75,3 +75,17 @@ input[type=number]:focus, select:focus, input[type=color]:focus, button:focus {
     border: 1px solid white;
     color: white;
 }
+
+#welcomescreen {
+    top: 0;
+    left: 0;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-color: #222222;
+    z-index: 69;
+}
+
+input[type=file] {
+    display: none;
+}

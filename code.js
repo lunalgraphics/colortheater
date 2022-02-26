@@ -70,3 +70,22 @@ document.querySelector("#exportbutton").addEventListener("click", function() {
         a.click();
     });
 });
+
+document.querySelector("input[type=file]").addEventListener("change", function() {
+    var file = this.files[0];
+    var fR = new FileReader();
+    fR.addEventListener("loadend", function(e) {
+        var imageuri = e.target.result;
+        document.querySelector("#baseImage").setAttribute("href", imageuri);
+        var image = new Image();
+        image.src = imageuri;
+        image.addEventListener("load", function() {
+            document.querySelector("svg").setAttribute("viewBox", `0 0 ${this.width} ${this.height}`);
+            document.querySelector("#welcomescreen").remove();
+        });
+    });
+    fR.readAsDataURL(file);
+});
+document.querySelector("#startbutton").addEventListener("click", function() {
+    document.querySelector("input[type=file]").click();
+});

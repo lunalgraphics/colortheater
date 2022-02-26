@@ -23,7 +23,7 @@
                     </radialGradient>
                 </defs>
                 <image id="baseImage" href="test-image.jpg" filter="url(#colorgrade)" />
-                <rect id="vignetteRect" x="0" y="0" width="1920" height="1280" fill="url(#vignetteGradient)" style="mix-blend-mode: multiply;" fill-opacity="0"></rect>
+                <rect id="vignetteRect" x="0" y="0" width="100%" height="100%" fill="url(#vignetteGradient)" style="mix-blend-mode: multiply;" fill-opacity="0"></rect>
             </svg>
         </div>
         <div id="controlpanel">
@@ -53,6 +53,12 @@
         </div>
         <div id="bottompanel">
             <button id="exportbutton" style="padding-left: 10px; padding-right: 10px;">Export as PNG</button>
+        </div>
+        <div id="welcomescreen">
+            <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);">
+                <button id="startbutton" style="padding-left: 10px; padding-right: 10px;">Upload image</button>
+                <input type="file" />
+            </div>
         </div>
         <script src="code.js"></script>
     </body>
