@@ -54,3 +54,7 @@ fetch("presets.json").then(response => response.json()).then(function(presets) {
         document.querySelector("#colorgrade feColorMatrix").setAttribute("values", arraytostring(colorMatrixValues));
     });
 });
+
+document.querySelector("#vignettefillcontrol").addEventListener("input", function() {
+    document.querySelector("#vignetteRect").setAttribute("fill-opacity", this.value);
+});

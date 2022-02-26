@@ -41,6 +41,10 @@ svg {
     font-size: 20px;
 }
 
+#controlpanel hr {
+    opacity: 0.1;
+}
+
 input[type=number], select {
     box-sizing: border-box;
     padding: 3px;
