@@ -1,3 +1,7 @@
+body {
+    background-color: #222222;
+}
+
 #previewspace {
     width: calc(100vw - 357px);
     height: 100vh;
@@ -22,7 +26,7 @@ svg {
     background-color: #333333;
     padding: 10px;
     box-sizing: border-box;
-    border: 15px solid white;
+    border: 15px solid #222222;
 }
 
 #controlpanel td {
