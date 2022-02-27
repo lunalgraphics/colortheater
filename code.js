@@ -99,6 +99,8 @@ document.querySelector("#startbutton").addEventListener("click", function() {
 
 if ((new URLSearchParams(location.search)).get("portal") == "photopea") {
     document.querySelector("#exportbutton").innerText = "Finish";
+    document.querySelector("#startbutton").remove();
+    document.querySelector("#welcomescreen img").setAttribute("width", "250px");
     Photopea.runScript(window.parent, "app.activeDocument.saveToOE('png')").then(function(data) {
         var buffer = data[0];
         var imageuri = "data:image/png;base64," + base64ArrayBuffer(buffer);
