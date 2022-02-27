@@ -101,17 +101,19 @@ if ((new URLSearchParams(location.search)).get("portal") == "photopea") {
     document.querySelector("#exportbutton").innerText = "Finish";
     Photopea.runScript(window.parent, "app.activeDocument.saveToOE('png')").then(function(data) {
         var buffer = data[0];
-        var fR = new FileReader();
-        fR.addEventListener("load", function(e) {
-            var imageuri = e.target.result;
-            document.querySelector("#baseImage").setAttribute("href", imageuri);
-            var image = new Image();
-            image.src = imageuri;
-            image.addEventListener("load", function() {
-                document.querySelector("svg").setAttribute("viewBox", `0 0 ${this.width} ${this.height}`);
-                document.querySelector("#welcomescreen").remove();
-            });
+        var binary = "";
+        var bytes = new Uint8Array(buffer);
+        var len = bytes.byteLength;
+        for (var i = 0; i < len; i++) {
+            binary += String.fromCharCode( bytes[ i ] );
+        }
+        var imageuri = "data:image/png;base64," + window.btoa(binary);
+        document.querySelector("#baseImage").setAttribute("href", imageuri);
+        var image = new Image();
+        image.src = imageuri;
+        image.addEventListener("load", function() {
+            document.querySelector("svg").setAttribute("viewBox", `0 0 ${this.width} ${this.height}`);
+            document.querySelector("#welcomescreen").remove();
         });
-        fR.readAsDataURL(new Blob([buffer], { type: "image/png" }));
     });
 }
