@@ -62,6 +62,13 @@ document.querySelector("#vignettecolorcontrol").addEventListener("input", functi
     document.querySelectorAll("#vignetteGradient stop")[1].style.stopColor = this.value;
 });
 
+document.querySelector("#tintfillcontrol").addEventListener("input", function() {
+    document.querySelector("#tintlayer").setAttribute("fill-opacity", this.value);
+});
+document.querySelector("#tintcolorcontrol").addEventListener("input", function() {
+    document.querySelector("#tintlayer").style.fill = this.value;
+});
+
 document.querySelector("#exportbutton").addEventListener("click", function() {
     rasterize(document.querySelector("svg")).then(function(outputURI) {
         switch ((new URLSearchParams(location.search)).get("portal")) {
