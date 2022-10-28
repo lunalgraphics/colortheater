@@ -36,7 +36,17 @@
         </div>
         <div id="controlpanel">
             <i>Color Grading</i> <br />
-            Use preset: <select id="colorpresetselect"></select> <br />
+            Use preset:
+            <select id="colorpresetselect">
+                <option value="1 0 0 0 0
+0 1 0 0 0
+0 0 1 0 0
+0 0 0 1 0"
+                        >Default</option>
+                <option>Custom...</option>
+                <optgroup label="Built-in Presets"></optgroup>
+            </select>
+            <br />
             <table style="width: 100%;">
                 <tr>
                     <td></td><td style="color: #800000">R</td><td style="color: #008000">G</td><td style="color: #000080">B</td><td style="color: #808080">A</td><td style="color: #EEEEEE">+/-</td>
@@ -54,6 +64,7 @@
                     <td style="color: #808080">A</td><td id="cmatrixcell30"></td><td id="cmatrixcell31"></td><td id="cmatrixcell32"></td><td id="cmatrixcell33"></td><td id="cmatrixcell34"></td>
                 </tr>
             </table>
+            <button id="savePresetButton" style="padding: 3px 10px;">Save as Preset</button>
             <hr />
             <i>Vignette</i> <br />
             Color: <input type="color" id="vignettecolorcontrol" value="#000000" /> <br />
