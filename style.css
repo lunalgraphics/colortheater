@@ -121,3 +121,8 @@ input[type=file] {
 ::-webkit-scrollbar-thumb:hover {
     background: #00000020;
 }
+
+::selection {
+    background-color: white;
+    color: black;
+}
