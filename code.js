@@ -56,6 +56,8 @@ fetch("presets.json").then(response => response.json()).then(function(presets) {
     });
 });
 
+function grabPreset() { return arraytostring(colorMatrixValues).replaceAll("\n", "\\n"); }
+
 document.querySelector("#vignettescalecontrol").addEventListener("input", function() {
     document.querySelectorAll("#vignetteGradient stop")[0].setAttribute("offset", (100 - parseFloat(this.value)).toString() + "%");
 });
