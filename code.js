@@ -1,12 +1,13 @@
 function arraytostring(arr) {
-    var str = "";
+    var rowsData = [];
     for (var row of arr) {
+        var specificRowData = [];
         for (var col of row) {
-            str += col + " ";
+            specificRowData.push(col.toString());
         }
-        str += "\n";
+        rowsData.push(specificRowData.join(" "));
     }
-    return str;
+    return rowsData.join("\n");
 }
 
 var colorMatrixValues = [
