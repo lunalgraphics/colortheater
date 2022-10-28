@@ -55,6 +55,9 @@ fetch("presets.json").then(response => response.json()).then(function(presets) {
     });
 });
 
+document.querySelector("#vignettescalecontrol").addEventListener("input", function() {
+    document.querySelectorAll("#vignetteGradient stop")[0].setAttribute("offset", (100 - parseFloat(this.value)).toString() + "%");
+});
 document.querySelector("#vignettefillcontrol").addEventListener("input", function() {
     document.querySelector("#vignetteRect").setAttribute("fill-opacity", this.value);
 });
