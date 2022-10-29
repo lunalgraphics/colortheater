@@ -116,7 +116,7 @@ document.querySelector("#exportbutton").addEventListener("click", function() {
             default:
                 var a = document.createElement("a");
                 a.href = outputURI;
-                a.download = "edited-production.png";
+                a.download = "colortheater-output.png";
                 a.click();
                 break;
         }
