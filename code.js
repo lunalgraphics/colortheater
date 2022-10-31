@@ -34,11 +34,13 @@ for (var i = 0; i < 4; i++) {
     }
 }
 
-fetch("presets.json").then(response => response.json()).then(function(presets) {
-    for (var preset in presets) {
+fetch("presets.xml").then(response => response.text()).then(function(xmlText) {
+    var dparse = new DOMParser();
+    var xmlDoc = dparse.parseFromString(xmlText, "application/xml");
+    for (var preset of xmlDoc.getElementsByTagName("preset")) {
         var option = document.createElement("option");
-        option.innerText = preset;
-        option.value = presets[preset];
+        option.innerText = preset.getAttribute("name");
+        option.value = preset.childNodes[0].nodeValue;
         document.querySelector("#colorpresetselect optgroup").appendChild(option);
     }
     document.querySelector("#colorpresetselect").addEventListener("input", function() {
@@ -66,7 +68,7 @@ fetch("presets.json").then(response => response.json()).then(function(presets) {
             fileUpload.click();
         }
         else {
-            var matrix_split = this.value.split("\n");
+            var matrix_split = this.value.split("\\n");
             for (var i = 0; i < matrix_split.length; i++) {
                 matrix_split[i] = matrix_split[i].split(" ");
             }
