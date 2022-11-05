@@ -97,9 +97,14 @@ document.querySelector("#vignettecolorcontrol").addEventListener("input", functi
 
 document.querySelector("#tintfillcontrol").addEventListener("input", function() {
     document.querySelector("#tintlayer").setAttribute("fill-opacity", this.value);
+    if (parseFloat(this.value) > 1) {
+        document.querySelector("#tintlayerXtra").setAttribute("fill-opacity", parseFloat(this.value) - 1);
+        document.querySelector("#tintlayer").setAttribute("fill-opacity", "1");
+    }
 });
 document.querySelector("#tintcolorcontrol").addEventListener("input", function() {
     document.querySelector("#tintlayer").style.fill = this.value;
+    document.querySelector("#tintlayerXtra").style.fill = this.value;
 });
 
 document.querySelector("#savePresetButton").addEventListener("click", function() {
