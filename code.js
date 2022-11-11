@@ -101,6 +101,9 @@ document.querySelector("#tintfillcontrol").addEventListener("input", function() 
         document.querySelector("#tintlayerXtra").setAttribute("fill-opacity", parseFloat(this.value) - 1);
         document.querySelector("#tintlayer").setAttribute("fill-opacity", "1");
     }
+    else {
+        document.querySelector("#tintlayerXtra").setAttribute("fill-opacity", "0");
+    }
 });
 document.querySelector("#tintcolorcontrol").addEventListener("input", function() {
     document.querySelector("#tintlayer").style.fill = this.value;
