@@ -55,7 +55,7 @@ fetch("presets.xml").then(response => response.text()).then(function(xmlText) {
                     for (var i = 0; i < matrix_split.length; i++) {
                         matrix_split[i] = matrix_split[i].split(" ");
                     }
-                    var colorMatrixValues = matrix_split;
+                    colorMatrixValues = matrix_split;
                     for (var i = 0; i < 4; i++) {
                         for (var j = 0; j < 5; j++) {
                             document.querySelector(`#cmatrixinput${i}${j}`).value = matrix_split[i][j];
