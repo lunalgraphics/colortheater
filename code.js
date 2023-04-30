@@ -126,7 +126,7 @@ document.querySelector("#savePresetButton").addEventListener("click", function()
 });
 
 document.querySelector("#exportbutton").addEventListener("click", function() {
-    rasterize(document.querySelector("svg")).then(function(outputURI) {
+    var outputURI = document.querySelector("canvas").toDataURL();
         switch ((new URLSearchParams(location.search)).get("portal")) {
             case "photopea":
                 Photopea.runScript(window.parent, `app.open("${outputURI}", null, true)`);
@@ -138,7 +138,6 @@ document.querySelector("#exportbutton").addEventListener("click", function() {
                 a.click();
                 break;
         }
-    });
 });
 
 document.querySelector("input[type=file]").addEventListener("change", function() {
