@@ -30,6 +30,7 @@ for (var i = 0; i < 4; i++) {
         input.addEventListener("input", function() {
             colorMatrixValues[parseInt(this.id.split("cmatrixinput")[1].split("")[0])][parseInt(this.id.split("cmatrixinput")[1].split("")[1])] = parseFloat(this.value);
             document.querySelector("#colorgrade feColorMatrix").setAttribute("values", arraytostring(colorMatrixValues));
+            newPreview();
         });
     }
 }
@@ -62,6 +63,7 @@ fetch("presets.xml").then(response => response.text()).then(function(xmlText) {
                         }
                     }
                     document.querySelector("#colorgrade feColorMatrix").setAttribute("values", arraytostring(colorMatrixValues));
+                    newPreview();
                 });
                 fR.readAsText(file);
             });
@@ -79,6 +81,7 @@ fetch("presets.xml").then(response => response.text()).then(function(xmlText) {
                 }
             }
             document.querySelector("#colorgrade feColorMatrix").setAttribute("values", arraytostring(colorMatrixValues));
+            newPreview();
         }
     });
 });
@@ -87,12 +90,15 @@ function grabPreset() { return arraytostring(colorMatrixValues).replaceAll("\n",
 
 document.querySelector("#vignettescalecontrol").addEventListener("input", function() {
     document.querySelectorAll("#vignetteGradient stop")[0].setAttribute("offset", (100 - parseFloat(this.value)).toString() + "%");
+    newPreview();
 });
 document.querySelector("#vignettefillcontrol").addEventListener("input", function() {
     document.querySelector("#vignetteRect").setAttribute("fill-opacity", this.value);
+    newPreview();
 });
 document.querySelector("#vignettecolorcontrol").addEventListener("input", function() {
     document.querySelectorAll("#vignetteGradient stop")[1].style.stopColor = this.value;
+    newPreview();
 });
 
 document.querySelector("#tintfillcontrol").addEventListener("input", function() {
@@ -104,10 +110,12 @@ document.querySelector("#tintfillcontrol").addEventListener("input", function() 
     else {
         document.querySelector("#tintlayerXtra").setAttribute("fill-opacity", "0");
     }
+    newPreview();
 });
 document.querySelector("#tintcolorcontrol").addEventListener("input", function() {
     document.querySelector("#tintlayer").style.fill = this.value;
     document.querySelector("#tintlayerXtra").style.fill = this.value;
+    newPreview();
 });
 
 document.querySelector("#savePresetButton").addEventListener("click", function() {
@@ -143,6 +151,7 @@ document.querySelector("input[type=file]").addEventListener("change", function()
         image.src = imageuri;
         image.addEventListener("load", function() {
             document.querySelector("svg").setAttribute("viewBox", `0 0 ${this.width} ${this.height}`);
+            newPreview();
             document.querySelector("#welcomescreen").remove();
         });
     });
@@ -164,6 +173,7 @@ if ((new URLSearchParams(location.search)).get("portal") == "photopea") {
         image.src = imageuri;
         image.addEventListener("load", function() {
             document.querySelector("svg").setAttribute("viewBox", `0 0 ${this.width} ${this.height}`);
+            newPreview();
             document.querySelector("#welcomescreen").remove();
         });
     });
