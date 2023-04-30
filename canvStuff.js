@@ -20,18 +20,21 @@ function newPreview() {
     ctx.restore();
     ctx.save();
     ctx.globalCompositeOperation = "multiply";
-    var grad = ctx.createRadialGradient(
-        canv.width / 2, canv.height / 2,
+    var vignetteBuffer = document.createElement("canvas");
+    vignetteBuffer.width = 512; vignetteBuffer.height = 512;
+    var grad = vignetteBuffer.getContext("2d").createRadialGradient(
+        256, 256,
         0,
-        canv.width / 2, canv.height / 2,
-        Math.max(canv.width, canv.height) * 0.72, // why can't I make it elliptical???
+        256, 256,
+        256
     );
     for (var stop of vignetteStops) {
         grad.addColorStop(stop.offset.animVal, stop.style.stopColor);
     }
-    ctx.fillStyle = grad;
+    vignetteBuffer.getContext("2d").fillStyle = grad;
+    vignetteBuffer.getContext("2d").fillRect(0, 0, 512, 512);
     ctx.globalAlpha = parseFloat(vignetteRect.getAttribute("fill-opacity"));
-    ctx.fillRect(0, 0, canv.width, canv.height);
+    ctx.drawImage(vignetteBuffer, -canv.width * 0.22, -canv.height * 0.22, canv.width * 1.44, canv.height * 1.44);
     ctx.restore();
     ctx.save();
     ctx.globalCompositeOperation = "soft-light";
