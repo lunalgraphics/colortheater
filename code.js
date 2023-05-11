@@ -123,8 +123,8 @@ function updateSplitToning() {
     var balance = parseFloat(document.querySelector("#toningBalanceCtrl").value);
     var highlights = document.querySelector("#toningHCtrl").value;
     var shadows = document.querySelector("#toningSCtrl").value;
-    document.querySelector("#toningH").style.filter = `brightness(${(amnt + balance) / 3}%)`;
-    document.querySelector("#toningS").style.filter = `invert(100%) brightness(${(amnt - balance) / 3}%) invert(100%)`;
+    document.querySelector("#toningH").style.filter = `brightness(${amnt * (1 + balance / 50) / 3}%)`;
+    document.querySelector("#toningS").style.filter = `invert(100%) brightness(${amnt * (1 - balance / 50) / 3}%) invert(100%)`;
     document.querySelector("#toningH").style.fill = highlights;
     document.querySelector("#toningS").style.fill = shadows;
 }
