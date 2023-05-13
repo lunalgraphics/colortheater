@@ -7,6 +7,10 @@ function newPreview() {
         document.querySelector("#tintlayer"),
         document.querySelector("#tintlayerXtra")
     ];
+    var toningLayers = [
+        document.querySelector("#toningH"),
+        document.querySelector("#toningS")
+    ];
     var baseImage = document.querySelector("#baseImage");
     var gradeFilter = document.querySelector("#colorgrade");
 
@@ -41,6 +45,14 @@ function newPreview() {
     for (var layer of tintLayers) {
         ctx.fillStyle = layer.style.fill;
         ctx.globalAlpha = parseFloat(layer.getAttribute("fill-opacity"));
+        ctx.fillRect(0, 0, canv.width, canv.height);
+    }
+    ctx.restore();
+    ctx.save();
+    for (var tLayer of toningLayers) {
+        ctx.fillStyle = tLayer.style.fill;
+        ctx.globalCompositeOperation = tLayer.style["mix-blend-mode"];
+        ctx.filter = tLayer.style.filter;
         ctx.fillRect(0, 0, canv.width, canv.height);
     }
 }
