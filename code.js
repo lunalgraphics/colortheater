@@ -21,14 +21,14 @@ for (var i = 0; i < 4; i++) {
     for (var j = 0; j < 5; j++) {
         var input = document.createElement("input");
         input.type = "number";
-        if (i == j) input.value = 1; else input.value = 0;
-        if (j < 4) input.step = "0.1"; else input.step = "0.01";
+        if (i == j) input.value = 100; else input.value = 0;
+        input.step = 1;
         input.style.width = "100%";
         input.style.boxSizing = "border-box";
         input.id = `cmatrixinput${i}${j}`;
         document.querySelector(`#cmatrixcell${i}${j}`).appendChild(input);
         input.addEventListener("input", function() {
-            colorMatrixValues[parseInt(this.id.split("cmatrixinput")[1].split("")[0])][parseInt(this.id.split("cmatrixinput")[1].split("")[1])] = parseFloat(this.value);
+            colorMatrixValues[parseInt(this.id.split("cmatrixinput")[1].split("")[0])][parseInt(this.id.split("cmatrixinput")[1].split("")[1])] = parseFloat(this.value) / 100;
             document.querySelector("#colorgrade feColorMatrix").setAttribute("values", arraytostring(colorMatrixValues));
             newPreview();
         });
@@ -59,7 +59,7 @@ fetch("presets.xml").then(response => response.text()).then(function(xmlText) {
                     colorMatrixValues = matrix_split;
                     for (var i = 0; i < 4; i++) {
                         for (var j = 0; j < 5; j++) {
-                            document.querySelector(`#cmatrixinput${i}${j}`).value = matrix_split[i][j];
+                            document.querySelector(`#cmatrixinput${i}${j}`).value = matrix_split[i][j] * 100;
                         }
                     }
                     document.querySelector("#colorgrade feColorMatrix").setAttribute("values", arraytostring(colorMatrixValues));
@@ -77,7 +77,7 @@ fetch("presets.xml").then(response => response.text()).then(function(xmlText) {
             colorMatrixValues = matrix_split;
             for (var i = 0; i < 4; i++) {
                 for (var j = 0; j < 5; j++) {
-                    document.querySelector(`#cmatrixinput${i}${j}`).value = matrix_split[i][j];
+                    document.querySelector(`#cmatrixinput${i}${j}`).value = matrix_split[i][j] * 100;
                 }
             }
             document.querySelector("#colorgrade feColorMatrix").setAttribute("values", arraytostring(colorMatrixValues));
@@ -93,7 +93,7 @@ document.querySelector("#vignettescalecontrol").addEventListener("input", functi
     newPreview();
 });
 document.querySelector("#vignettefillcontrol").addEventListener("input", function() {
-    document.querySelector("#vignetteRect").setAttribute("fill-opacity", this.value);
+    document.querySelector("#vignetteRect").setAttribute("fill-opacity", this.value / 100);
     newPreview();
 });
 document.querySelector("#vignettecolorcontrol").addEventListener("input", function() {
@@ -102,9 +102,9 @@ document.querySelector("#vignettecolorcontrol").addEventListener("input", functi
 });
 
 document.querySelector("#tintfillcontrol").addEventListener("input", function() {
-    document.querySelector("#tintlayer").setAttribute("fill-opacity", this.value);
-    if (parseFloat(this.value) > 1) {
-        document.querySelector("#tintlayerXtra").setAttribute("fill-opacity", parseFloat(this.value) - 1);
+    document.querySelector("#tintlayer").setAttribute("fill-opacity", parseFloat(this.value) / 100);
+    if (parseFloat(this.value) > 100) {
+        document.querySelector("#tintlayerXtra").setAttribute("fill-opacity", parseFloat(this.value) / 100 - 1);
         document.querySelector("#tintlayer").setAttribute("fill-opacity", "1");
     }
     else {
