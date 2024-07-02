@@ -97,6 +97,11 @@ input[type=color] {
     height: 27px;
 }
 
+button {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
 @media only screen and (max-width: 555px) {
     #previewspace {
         width: 100vw;

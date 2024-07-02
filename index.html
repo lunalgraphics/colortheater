@@ -39,6 +39,11 @@
             <canvas></canvas>
         </div>
         <div id="controlpanel">
+            <div style="text-align: center;">
+                <button id="importPresetBtn">Import Preset</button> |
+                <button id="exportPresetBtn">Export Preset</button>
+            </div>
+            <hr />
             <i>Basic Adjustments</i> <br />
             Brightness: <input type="number" id="brightnessCtrl" value="100" min="0" max="200" /> <br />
             Contrast: <input type="number" id="contrastCtrl" value="100" min="0" max="200" /> <br />
@@ -88,12 +93,12 @@
             Amount: <input type="number" id="tintfillcontrol" value="0" min="0" max="200" step="1" />
         </div>
         <div id="bottompanel">
-            <button id="exportbutton" style="padding-left: 10px; padding-right: 10px;">Export as PNG</button>
+            <button id="exportbutton">Export as PNG</button>
         </div>
         <div id="welcomescreen">
             <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: center;">
                 <img src="banner.png" draggable="false" width="420px" /> <br />
-                <button id="startbutton" style="padding-left: 10px; padding-right: 10px;">Upload image</button>
+                <button id="startbutton">Upload image</button>
                 <input type="file" accept="image/*" />
             </div>
         </div>
