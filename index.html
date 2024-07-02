@@ -50,14 +50,6 @@
             Saturation: <input type="number" id="saturationCtrl" value="100" min="0" max="200" /> <br />
             Sepia: <input type="number" id="sepiaCtrl" value="0" min="0" max="100" /> <br />
             <hr />
-            <i>Split Toning</i> <br />
-            Highlights: <br />
-            - Color: <input type="color" id="toningHColorCtrl" value="#ff5400" /> <br />
-            - Amount: <input type="number" id="toningHAmntCtrl" value="0" min="0" max="100" /> <br />
-            Shadows: <br />
-            - Color: <input type="color" id="toningSColorCtrl" value="#0081ff" /> <br />
-            - Amount: <input type="number" id="toningSAmntCtrl" value="0" min="0" max="100" /> <br />
-            <hr />
             <i>Color Matrix</i> <br />
             <table style="width: 100%;" id="cmatrixTable">
                 <tr>
@@ -76,6 +68,17 @@
                     <td style="color: #808080">A</td><td id="cmatrixcell30"></td><td id="cmatrixcell31"></td><td id="cmatrixcell32"></td><td id="cmatrixcell33"></td><td id="cmatrixcell34"></td>
                 </tr>
             </table>
+            <i>Tint</i> <br />
+            Color: <input type="color" id="tintcolorcontrol" value="#004080" /> <br />
+            Amount: <input type="number" id="tintfillcontrol" value="0" min="0" max="200" step="1" />
+            <hr />
+            <i>Split Toning</i> <br />
+            Highlights: <br />
+            - Color: <input type="color" id="toningHColorCtrl" value="#ff5400" /> <br />
+            - Amount: <input type="number" id="toningHAmntCtrl" value="0" min="0" max="100" /> <br />
+            Shadows: <br />
+            - Color: <input type="color" id="toningSColorCtrl" value="#0081ff" /> <br />
+            - Amount: <input type="number" id="toningSAmntCtrl" value="0" min="0" max="100" /> <br />
             <hr />
             <i>Vignette</i> <br />
             Color: <input type="color" id="vignettecolorcontrol" value="#000000" /> <br />
@@ -88,9 +91,6 @@
                 <option value="screen">Screen</option>
             </select>
             <hr />
-            <i>Tint</i> <br />
-            Color: <input type="color" id="tintcolorcontrol" value="#004080" /> <br />
-            Amount: <input type="number" id="tintfillcontrol" value="0" min="0" max="200" step="1" />
         </div>
         <div id="bottompanel">
             <button id="exportbutton">Export as PNG</button>
