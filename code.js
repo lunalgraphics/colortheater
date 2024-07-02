@@ -118,6 +118,42 @@ document.querySelector("#tintcolorcontrol").addEventListener("input", function()
     newPreview();
 });
 
+let basicAdj = {
+    brightness: 1,
+    contrast: 1,
+    saturate: 1,
+    sepia: 0,
+};
+function applyBasicAdj() {
+    document.querySelector("#baseImage").setAttribute("filter", `
+        brightness(${basicAdj["brightness"]})
+        contrast(${basicAdj["contrast"]})
+        saturate(${basicAdj["saturate"]})
+        sepia(${basicAdj["sepia"]})
+        url(#colorgrade)
+    `);
+}
+document.querySelector("#brightnessCtrl").addEventListener("input", function() {
+    basicAdj["brightness"] = parseFloat(this.value) / 100;
+    applyBasicAdj();
+    newPreview();
+});
+document.querySelector("#contrastCtrl").addEventListener("input", function() {
+    basicAdj["contrast"] = parseFloat(this.value) / 100;
+    applyBasicAdj();
+    newPreview();
+});
+document.querySelector("#saturationCtrl").addEventListener("input", function() {
+    basicAdj["saturate"] = parseFloat(this.value) / 100;
+    applyBasicAdj();
+    newPreview();
+});
+document.querySelector("#sepiaCtrl").addEventListener("input", function() {
+    basicAdj["sepia"] = parseFloat(this.value) / 100;
+    applyBasicAdj();
+    newPreview();
+});
+
 function updateSplitToning() {
     var amnt = parseFloat(document.querySelector("#toningAmntCtrl").value);
     var balance = parseFloat(document.querySelector("#toningBalanceCtrl").value);
