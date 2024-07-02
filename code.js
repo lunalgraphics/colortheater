@@ -35,59 +35,6 @@ for (var i = 0; i < 4; i++) {
     }
 }
 
-fetch("presets.xml").then(response => response.text()).then(function(xmlText) {
-    var dparse = new DOMParser();
-    var xmlDoc = dparse.parseFromString(xmlText, "application/xml");
-    for (var preset of xmlDoc.getElementsByTagName("preset")) {
-        var option = document.createElement("option");
-        option.innerText = preset.getAttribute("name");
-        option.value = preset.childNodes[0].nodeValue;
-        document.querySelector("#colorpresetselect optgroup").appendChild(option);
-    }
-    document.querySelector("#colorpresetselect").addEventListener("input", function() {
-        if (this.value == "Custom...") {
-            var fileUpload = document.createElement("input");
-            fileUpload.type = "file";
-            fileUpload.addEventListener("change", function() {
-                var file = this.files[0];
-                var fR = new FileReader();
-                fR.addEventListener("loadend", function(e) {
-                    var matrix_split = e.target.result.split("\\n");
-                    for (var i = 0; i < matrix_split.length; i++) {
-                        matrix_split[i] = matrix_split[i].split(" ");
-                    }
-                    colorMatrixValues = matrix_split;
-                    for (var i = 0; i < 4; i++) {
-                        for (var j = 0; j < 5; j++) {
-                            document.querySelector(`#cmatrixinput${i}${j}`).value = matrix_split[i][j] * 100;
-                        }
-                    }
-                    document.querySelector("#colorgrade feColorMatrix").setAttribute("values", arraytostring(colorMatrixValues));
-                    newPreview();
-                });
-                fR.readAsText(file);
-            });
-            fileUpload.click();
-        }
-        else {
-            var matrix_split = this.value.split("\\n");
-            for (var i = 0; i < matrix_split.length; i++) {
-                matrix_split[i] = matrix_split[i].split(" ");
-            }
-            colorMatrixValues = matrix_split;
-            for (var i = 0; i < 4; i++) {
-                for (var j = 0; j < 5; j++) {
-                    document.querySelector(`#cmatrixinput${i}${j}`).value = matrix_split[i][j] * 100;
-                }
-            }
-            document.querySelector("#colorgrade feColorMatrix").setAttribute("values", arraytostring(colorMatrixValues));
-            newPreview();
-        }
-    });
-});
-
-function grabPreset() { return arraytostring(colorMatrixValues).replaceAll("\n", "\\n"); }
-
 document.querySelector("#vignettescalecontrol").addEventListener("input", function() {
     document.querySelectorAll("#vignetteGradient stop")[0].setAttribute("offset", (100 - parseFloat(this.value)).toString() + "%");
     newPreview();
@@ -175,13 +122,6 @@ for (var x of ["#toningHColorCtrl", "#toningHAmntCtrl", "#toningSColorCtrl", "#t
         newPreview();
     });
 }
-
-document.querySelector("#savePresetButton").addEventListener("click", function() {
-    var a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([grabPreset()], {type: "txt"}));
-    a.download = "preset.cmtx";
-    a.click();
-});
 
 document.querySelector("#exportbutton").addEventListener("click", function() {
     var outputURI = document.querySelector("canvas").toDataURL();
