@@ -155,17 +155,17 @@ document.querySelector("#sepiaCtrl").addEventListener("input", function() {
 });
 
 function updateSplitToning() {
-    var amnt = parseFloat(document.querySelector("#toningAmntCtrl").value);
-    var balance = parseFloat(document.querySelector("#toningBalanceCtrl").value);
-    var highlights = document.querySelector("#toningHCtrl").value;
-    var shadows = document.querySelector("#toningSCtrl").value;
-    document.querySelector("#toningH").style.filter = `brightness(${amnt * (1 + balance / 50) / 3}%)`;
-    document.querySelector("#toningS").style.filter = `invert(100%) brightness(${amnt * (1 - balance / 50) / 3}%) invert(100%)`;
-    document.querySelector("#toningH").style.fill = highlights;
-    document.querySelector("#toningS").style.fill = shadows;
+    var hColor = document.querySelector("#toningHColorCtrl").value;
+    let hAmnt = parseFloat(document.querySelector("#toningHAmntCtrl").value);
+    var sColor = document.querySelector("#toningSColorCtrl").value;
+    let sAmnt = parseFloat(document.querySelector("#toningSAmntCtrl").value);
+    document.querySelector("#toningH").style.filter = `brightness(${hAmnt / 2}%)`;
+    document.querySelector("#toningS").style.filter = `invert(100%) brightness(${sAmnt / 2}%) invert(100%)`;
+    document.querySelector("#toningH").style.fill = hColor;
+    document.querySelector("#toningS").style.fill = sColor;
 }
 
-for (var x of ["#toningAmntCtrl", "#toningBalanceCtrl", "#toningHCtrl", "#toningSCtrl"]) {
+for (var x of ["#toningHColorCtrl", "#toningHAmntCtrl", "#toningSColorCtrl", "#toningSAmntCtrl"]) {
     document.querySelector(x).addEventListener("input", function() {
         updateSplitToning();
         newPreview();
