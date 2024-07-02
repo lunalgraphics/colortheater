@@ -22,7 +22,7 @@
                         />
                     </filter>
                     <radialGradient id="vignetteGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                        <stop offset="50%" style="stop-color: #FFFFFF; stop-opacity: 1;" />
+                        <stop offset="50%" style="stop-color: transparent; stop-opacity: 1;" />
                         <stop offset="100%" style="stop-color: #000000; stop-opacity: 1;" />
                     </radialGradient>
                     <clipPath id="imagemask">
@@ -84,7 +84,13 @@
             <i>Vignette</i> <br />
             Color: <input type="color" id="vignettecolorcontrol" value="#000000" /> <br />
             Size: <input type="number" id="vignettescalecontrol" value="50" min="0" max="100" /> <br />
-            Opacity: <input type="number" id="vignettefillcontrol" value="0" min="0" max="100" step="1" />
+            Opacity: <input type="number" id="vignettefillcontrol" value="0" min="0" max="100" step="1" /> <br />
+            Blending: <select value="multiply" id="vignetteBlendingCtrl">
+                <option value="multiply">Multiply</option>
+                <option value="overlay">Overlay</option>
+                <option value="soft-light">Soft Light</option>
+                <option value="screen">Screen</option>
+            </select>
             <hr />
             <i>Tint</i> <br />
             Color: <input type="color" id="tintcolorcontrol" value="#004080" /> <br />

@@ -100,6 +100,10 @@ document.querySelector("#vignettecolorcontrol").addEventListener("input", functi
     document.querySelectorAll("#vignetteGradient stop")[1].style.stopColor = this.value;
     newPreview();
 });
+document.querySelector("#vignetteBlendingCtrl").addEventListener("input", function() {
+    document.querySelector("#vignetteRect").style.mixBlendMode = this.value;
+    newPreview();
+});
 
 document.querySelector("#tintfillcontrol").addEventListener("input", function() {
     document.querySelector("#tintlayer").setAttribute("fill-opacity", parseFloat(this.value) / 100);

@@ -23,7 +23,7 @@ function newPreview() {
     ctx.drawImage(baseImage, 0, 0);
     ctx.restore();
     ctx.save();
-    ctx.globalCompositeOperation = "multiply";
+    ctx.globalCompositeOperation = vignetteRect.style.mixBlendMode;
     var vignetteBuffer = document.createElement("canvas");
     vignetteBuffer.width = 512; vignetteBuffer.height = 512;
     var grad = vignetteBuffer.getContext("2d").createRadialGradient(
