@@ -19,7 +19,7 @@ function newPreview() {
     canv.height = svg.viewBox.animVal.height;
     ctx.restore();
     ctx.save();
-    ctx.filter = `url(#${gradeFilter.id})`;
+    ctx.filter = baseImage.getAttribute("filter");
     ctx.drawImage(baseImage, 0, 0);
     ctx.restore();
     ctx.save();
