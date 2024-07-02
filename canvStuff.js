@@ -23,6 +23,22 @@ function newPreview() {
     ctx.drawImage(baseImage, 0, 0);
     ctx.restore();
     ctx.save();
+    ctx.globalCompositeOperation = "soft-light";
+    for (var layer of tintLayers) {
+        ctx.fillStyle = layer.style.fill;
+        ctx.globalAlpha = parseFloat(layer.getAttribute("fill-opacity"));
+        ctx.fillRect(0, 0, canv.width, canv.height);
+    }
+    ctx.restore();
+    ctx.save();
+    for (var tLayer of toningLayers) {
+        ctx.fillStyle = tLayer.style.fill;
+        ctx.globalCompositeOperation = tLayer.style["mix-blend-mode"];
+        ctx.filter = tLayer.style.filter;
+        ctx.fillRect(0, 0, canv.width, canv.height);
+    }
+    ctx.restore();
+    ctx.save();
     ctx.globalCompositeOperation = vignetteRect.style.mixBlendMode;
     var vignetteBuffer = document.createElement("canvas");
     vignetteBuffer.width = 512; vignetteBuffer.height = 512;
@@ -39,20 +55,4 @@ function newPreview() {
     vignetteBuffer.getContext("2d").fillRect(0, 0, 512, 512);
     ctx.globalAlpha = parseFloat(vignetteRect.getAttribute("fill-opacity"));
     ctx.drawImage(vignetteBuffer, -canv.width * 0.22, -canv.height * 0.22, canv.width * 1.44, canv.height * 1.44);
-    ctx.restore();
-    ctx.save();
-    ctx.globalCompositeOperation = "soft-light";
-    for (var layer of tintLayers) {
-        ctx.fillStyle = layer.style.fill;
-        ctx.globalAlpha = parseFloat(layer.getAttribute("fill-opacity"));
-        ctx.fillRect(0, 0, canv.width, canv.height);
-    }
-    ctx.restore();
-    ctx.save();
-    for (var tLayer of toningLayers) {
-        ctx.fillStyle = tLayer.style.fill;
-        ctx.globalCompositeOperation = tLayer.style["mix-blend-mode"];
-        ctx.filter = tLayer.style.filter;
-        ctx.fillRect(0, 0, canv.width, canv.height);
-    }
 }
