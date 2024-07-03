@@ -97,15 +97,20 @@ input[type=color] {
     height: 27px;
 }
 
+button {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
 @media only screen and (max-width: 555px) {
     #previewspace {
         width: 100vw;
-        height: 100vw;
+        height: 70vw;
     }
     #controlpanel {
-        top: 100vw;
+        top: 70vw;
         width: 100vw;
-        height: calc(100vh - 100vw - 69px);
+        height: calc(100vh - 70vw - 69px);
     }
     #bottompanel {
         width: 100vw;
@@ -140,4 +145,12 @@ canvas {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+#cmatrixTable tr td:nth-of-type(5), #cmatrixTable tr:nth-of-type(5) {
+    display: none;
+}
+
+#controlpanel input[type=number] {
+    width: 57px;
 }

@@ -3,6 +3,7 @@
     <head>
         <title>color theater</title>
         <link rel="stylesheet" href="style.css" />
+        <link rel="stylesheet" href="numberInput.css" />
         <script src="lib/rasterizer.js"></script>
         <script src="lib/photopea.min.js"></script>
         <script src="lib/base64ArrayBuffer.js"></script>
@@ -22,39 +23,36 @@
                         />
                     </filter>
                     <radialGradient id="vignetteGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                        <stop offset="50%" style="stop-color: #FFFFFF; stop-opacity: 1;" />
+                        <stop offset="50%" style="stop-color: transparent; stop-opacity: 1;" />
                         <stop offset="100%" style="stop-color: #000000; stop-opacity: 1;" />
                     </radialGradient>
                     <clipPath id="imagemask">
                         <rect x="0" y="0" width="100%" height="100%" />
                     </clipPath>
                 </defs>
-                <image id="baseImage" href="test-image.jpg" filter="url(#colorgrade)" image-rendering="optimizeQuality" clip-path="url(#imagemask)" />
-                <ellipse id="vignetteRect" cx="50%" cy="50%" rx="72%" ry="72%" fill="url(#vignetteGradient)" style="mix-blend-mode: multiply;" fill-opacity="0" clip-path="url(#imagemask)" image-rendering="optimizeQuality"></ellipse>
+                <image id="baseImage" href="test-image.jpg" filter="brightness(1) contrast(1) saturate(1) sepia(0) url(#colorgrade)" image-rendering="optimizeQuality" clip-path="url(#imagemask)" />
                 <rect id="tintlayer" x="0" y="0" width="100%" height="100%" style="mix-blend-mode: soft-light; fill: #004080;" fill-opacity="0"></rect>
                 <rect id="tintlayerXtra" x="0" y="0" width="100%" height="100%" style="mix-blend-mode: soft-light; fill: #004080;" fill-opacity="0"></rect>
                 <rect id="toningH" x="0" y="0" width="100%" height="100%" style="mix-blend-mode: color-dodge; fill: #ff5400; filter: brightness(0);"></rect>
                 <rect id="toningS" x="0" y="0" width="100%" height="100%" style="mix-blend-mode: color-burn; fill: #0081ff; filter: invert(100%) brightness(0) invert(100%);"></rect>
+                <ellipse id="vignetteRect" cx="50%" cy="50%" rx="72%" ry="72%" fill="url(#vignetteGradient)" style="mix-blend-mode: multiply;" fill-opacity="0" clip-path="url(#imagemask)" image-rendering="optimizeQuality"></ellipse>
             </svg>
             <canvas></canvas>
         </div>
         <div id="controlpanel">
-            <i>Split Toning</i> <br />
-            Amount: <input type="number" id="toningAmntCtrl" value="0" min="0" max="100" /> <br />
-            Balance: <input type="number" id="toningBalanceCtrl" value="0" min="-50" max="50" /> <br />
-            Highlights: <input type="color" id="toningHCtrl" value="#ff5400" /> <br />
-            Shadows: <input type="color" id="toningSCtrl" value="#0081ff" /> <br />
+            <div style="text-align: center;">
+                <button id="importPresetBtn">Import Preset</button>
+                <button id="exportPresetBtn">Export Preset</button>
+            </div>
+            <hr />
+            <i>Basic Adjustments</i> <br />
+            Brightness: <input type="number" id="brightnessCtrl" value="100" min="0" max="200" /> <br />
+            Contrast: <input type="number" id="contrastCtrl" value="100" min="0" max="200" /> <br />
+            Saturation: <input type="number" id="saturationCtrl" value="100" min="0" max="200" /> <br />
+            Sepia: <input type="number" id="sepiaCtrl" value="0" min="0" max="100" /> <br />
             <hr />
             <i>Color Matrix</i> <br />
-            Use preset:
-            <select id="colorpresetselect">
-                <option value="1 0 0 0 0\n0 1 0 0 0\n0 0 1 0 0\n0 0 0 1 0"
-                        >Default</option>
-                <option>Custom...</option>
-                <optgroup label="Built-in Presets"></optgroup>
-            </select>
-            <br />
-            <table style="width: 100%;">
+            <table style="width: 100%;" id="cmatrixTable">
                 <tr>
                     <td></td><td style="color: #800000">R</td><td style="color: #008000">G</td><td style="color: #000080">B</td><td style="color: #808080">A</td><td style="color: #EEEEEE">+/-</td>
                 </tr>
@@ -71,24 +69,37 @@
                     <td style="color: #808080">A</td><td id="cmatrixcell30"></td><td id="cmatrixcell31"></td><td id="cmatrixcell32"></td><td id="cmatrixcell33"></td><td id="cmatrixcell34"></td>
                 </tr>
             </table>
-            <button id="savePresetButton" style="padding: 3px 10px;">Save as Preset</button>
+            <hr />
+            <i>Tint</i> <br />
+            Color: <input type="color" id="tintcolorcontrol" value="#004080" /> <br />
+            Amount: <input type="number" id="tintfillcontrol" value="0" min="0" max="200" step="1" />
+            <hr />
+            <i>Split Toning</i> <br />
+            Highlights: <br />
+            - Color: <input type="color" id="toningHColorCtrl" value="#ff5400" /> <br />
+            - Amount: <input type="number" id="toningHAmntCtrl" value="0" min="0" max="100" /> <br />
+            Shadows: <br />
+            - Color: <input type="color" id="toningSColorCtrl" value="#0081ff" /> <br />
+            - Amount: <input type="number" id="toningSAmntCtrl" value="0" min="0" max="100" /> <br />
             <hr />
             <i>Vignette</i> <br />
             Color: <input type="color" id="vignettecolorcontrol" value="#000000" /> <br />
             Size: <input type="number" id="vignettescalecontrol" value="50" min="0" max="100" /> <br />
-            Opacity: <input type="number" id="vignettefillcontrol" value="0" min="0" max="1" step="0.01" />
-            <hr />
-            <i>Tint</i> <br />
-            Color: <input type="color" id="tintcolorcontrol" value="#004080" /> <br />
-            Amount: <input type="number" id="tintfillcontrol" value="0" min="0" max="2" step="0.01" />
+            Opacity: <input type="number" id="vignettefillcontrol" value="0" min="0" max="100" step="1" /> <br />
+            Blending: <select value="multiply" id="vignetteBlendingCtrl">
+                <option value="multiply">Multiply</option>
+                <option value="overlay">Overlay</option>
+                <option value="soft-light">Soft Light</option>
+                <option value="screen">Screen</option>
+            </select>
         </div>
         <div id="bottompanel">
-            <button id="exportbutton" style="padding-left: 10px; padding-right: 10px;">Export as PNG</button>
+            <button id="exportbutton">Export as PNG</button>
         </div>
         <div id="welcomescreen">
             <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: center;">
                 <img src="banner.png" draggable="false" width="420px" /> <br />
-                <button id="startbutton" style="padding-left: 10px; padding-right: 10px;">Upload image</button>
+                <button id="startbutton">Upload image</button>
                 <input type="file" accept="image/*" />
             </div>
         </div>
