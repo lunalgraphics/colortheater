@@ -150,3 +150,7 @@ canvas {
 #cmatrixTable tr td:nth-of-type(5), #cmatrixTable tr:nth-of-type(5) {
     display: none;
 }
+
+#controlpanel input[type=number] {
+    width: 57px;
+}
