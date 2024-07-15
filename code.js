@@ -261,8 +261,8 @@ function applyPreset(text) {
     let tintNode = xDoc.querySelector("tint");
     document.querySelector("#tintcolorcontrol").value = tintNode.getAttribute("color");
     document.querySelector("#tintfillcontrol").value = tintNode.getAttribute("fill");
-    document.querySelector("#tintlayer").style.fill = document.querySelector("#tintfillcontrol").value;
-    document.querySelector("#tintlayerXtra").style.fill = document.querySelector("#tintfillcontrol").value;
+    document.querySelector("#tintlayer").style.fill = document.querySelector("#tintcolorcontrol").value;
+    document.querySelector("#tintlayerXtra").style.fill = document.querySelector("#tintcolorcontrol").value;
     document.querySelector("#tintlayer").setAttribute("fill-opacity", parseFloat(document.querySelector("#tintfillcontrol").value) / 100);
     if (parseFloat(document.querySelector("#tintfillcontrol").value) > 100) {
         document.querySelector("#tintlayerXtra").setAttribute("fill-opacity", parseFloat(document.querySelector("#tintfillcontrol").value) / 100 - 1);
