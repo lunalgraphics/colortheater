@@ -221,6 +221,60 @@ document.querySelector("#exportPresetBtn").addEventListener("click", () => {
     a.click();
 });
 
+function applyPreset(text) {
+    let parser = new DOMParser();
+    let xDoc = parser.parseFromString(text, "text/xml");
+    let basicAdjNode = xDoc.querySelector("basicAdj");
+    document.querySelector("#brightnessCtrl").value = basicAdjNode.getAttribute("brightness");
+    basicAdj["brightness"] = parseFloat(document.querySelector("#brightnessCtrl").value) / 100;
+    document.querySelector("#contrastCtrl").value = basicAdjNode.getAttribute("contrast");
+    basicAdj["contrast"] = parseFloat(document.querySelector("#contrastCtrl").value) / 100;
+    document.querySelector("#saturationCtrl").value = basicAdjNode.getAttribute("saturate");
+    basicAdj["saturate"] = parseFloat(document.querySelector("#saturationCtrl").value) / 100;
+    document.querySelector("#sepiaCtrl").value = basicAdjNode.getAttribute("sepia");
+    basicAdj["sepia"] = parseFloat(document.querySelector("#sepiaCtrl").value) / 100;
+    applyBasicAdj();
+    let splitToningNode = xDoc.querySelector("splitToning");
+    document.querySelector("#toningHColorCtrl").value = splitToningNode.getAttribute("hColor");
+    document.querySelector("#toningHAmntCtrl").value = splitToningNode.getAttribute("hAmnt");
+    document.querySelector("#toningSColorCtrl").value = splitToningNode.getAttribute("sColor");
+    document.querySelector("#toningSAmntCtrl").value = splitToningNode.getAttribute("sAmnt");
+    updateSplitToning();
+    for (let row = 0; row < 4; row++) {
+        for (let col = 0; col < 5; col++) {
+            let cellId = row + "" + col;
+            let cellNode = xDoc.querySelector("cMatrix #cell" + cellId);
+            document.querySelector("#cmatrixcell" + cellId + " input[type=number]").value = cellNode.innerHTML;
+            colorMatrixValues[row][col] = parseFloat(cellNode.innerHTML) / 100;
+        }
+    }
+    document.querySelector("#colorgrade feColorMatrix").setAttribute("values", arraytostring(colorMatrixValues));
+    let vignetteNode = xDoc.querySelector("vignette");
+    document.querySelector("#vignettecolorcontrol").value = vignetteNode.getAttribute("color");
+    document.querySelector("#vignettescalecontrol").value = vignetteNode.getAttribute("scale");
+    document.querySelector("#vignettefillcontrol").value = vignetteNode.getAttribute("fill");
+    document.querySelector("#vignetteBlendingCtrl").value = vignetteNode.getAttribute("blending");
+    document.querySelectorAll("#vignetteGradient stop")[0].setAttribute("offset", (100 - parseFloat(document.querySelector("#vignettescalecontrol").value)).toString() + "%");
+    document.querySelector("#vignetteRect").setAttribute("fill-opacity", document.querySelector("#vignettefillcontrol").value / 100);
+    document.querySelectorAll("#vignetteGradient stop")[1].style.stopColor = document.querySelector("#vignettecolorcontrol").value;
+    document.querySelector("#vignetteRect").style.mixBlendMode = document.querySelector("#vignetteBlendingCtrl").value;
+    let tintNode = xDoc.querySelector("tint");
+    document.querySelector("#tintcolorcontrol").value = tintNode.getAttribute("color");
+    document.querySelector("#tintfillcontrol").value = tintNode.getAttribute("fill");
+    document.querySelector("#tintlayer").style.fill = document.querySelector("#tintfillcontrol").value;
+    document.querySelector("#tintlayerXtra").style.fill = document.querySelector("#tintfillcontrol").value;
+    document.querySelector("#tintlayer").setAttribute("fill-opacity", parseFloat(document.querySelector("#tintfillcontrol").value) / 100);
+    if (parseFloat(document.querySelector("#tintfillcontrol").value) > 100) {
+        document.querySelector("#tintlayerXtra").setAttribute("fill-opacity", parseFloat(document.querySelector("#tintfillcontrol").value) / 100 - 1);
+        document.querySelector("#tintlayer").setAttribute("fill-opacity", "1");
+    }
+    else {
+        document.querySelector("#tintlayerXtra").setAttribute("fill-opacity", "0");
+    }
+
+    newPreview();
+}
+
 document.querySelector("#importPresetBtn").addEventListener("click", () => {
     let fileUpload = document.createElement("input");
     fileUpload.type = "file";
@@ -230,58 +284,7 @@ document.querySelector("#importPresetBtn").addEventListener("click", () => {
         let fR = new FileReader();
         fR.addEventListener("loadend", (e2) => {
             let text = e2.target.result;
-            let parser = new DOMParser();
-            let xDoc = parser.parseFromString(text, "text/xml");
-            let basicAdjNode = xDoc.querySelector("basicAdj");
-            document.querySelector("#brightnessCtrl").value = basicAdjNode.getAttribute("brightness");
-            basicAdj["brightness"] = parseFloat(document.querySelector("#brightnessCtrl").value) / 100;
-            document.querySelector("#contrastCtrl").value = basicAdjNode.getAttribute("contrast");
-            basicAdj["contrast"] = parseFloat(document.querySelector("#contrastCtrl").value) / 100;
-            document.querySelector("#saturationCtrl").value = basicAdjNode.getAttribute("saturate");
-            basicAdj["saturate"] = parseFloat(document.querySelector("#saturationCtrl").value) / 100;
-            document.querySelector("#sepiaCtrl").value = basicAdjNode.getAttribute("sepia");
-            basicAdj["sepia"] = parseFloat(document.querySelector("#sepiaCtrl").value) / 100;
-            applyBasicAdj();
-            let splitToningNode = xDoc.querySelector("splitToning");
-            document.querySelector("#toningHColorCtrl").value = splitToningNode.getAttribute("hColor");
-            document.querySelector("#toningHAmntCtrl").value = splitToningNode.getAttribute("hAmnt");
-            document.querySelector("#toningSColorCtrl").value = splitToningNode.getAttribute("sColor");
-            document.querySelector("#toningSAmntCtrl").value = splitToningNode.getAttribute("sAmnt");
-            updateSplitToning();
-            for (let row = 0; row < 4; row++) {
-                for (let col = 0; col < 5; col++) {
-                    let cellId = row + "" + col;
-                    let cellNode = xDoc.querySelector("cMatrix #cell" + cellId);
-                    document.querySelector("#cmatrixcell" + cellId + " input[type=number]").value = cellNode.innerHTML;
-                    colorMatrixValues[row][col] = parseFloat(cellNode.innerHTML) / 100;
-                }
-            }
-            document.querySelector("#colorgrade feColorMatrix").setAttribute("values", arraytostring(colorMatrixValues));
-            let vignetteNode = xDoc.querySelector("vignette");
-            document.querySelector("#vignettecolorcontrol").value = vignetteNode.getAttribute("color");
-            document.querySelector("#vignettescalecontrol").value = vignetteNode.getAttribute("scale");
-            document.querySelector("#vignettefillcontrol").value = vignetteNode.getAttribute("fill");
-            document.querySelector("#vignetteBlendingCtrl").value = vignetteNode.getAttribute("blending");
-            document.querySelectorAll("#vignetteGradient stop")[0].setAttribute("offset", (100 - parseFloat(document.querySelector("#vignettescalecontrol").value)).toString() + "%");
-            document.querySelector("#vignetteRect").setAttribute("fill-opacity", document.querySelector("#vignettefillcontrol").value / 100);
-            document.querySelectorAll("#vignetteGradient stop")[1].style.stopColor = document.querySelector("#vignettecolorcontrol").value;
-            document.querySelector("#vignetteRect").style.mixBlendMode = document.querySelector("#vignetteBlendingCtrl").value;
-            let tintNode = xDoc.querySelector("tint");
-            document.querySelector("#tintcolorcontrol").value = tintNode.getAttribute("color");
-            document.querySelector("#tintfillcontrol").value = tintNode.getAttribute("fill");
-            document.querySelector("#tintlayer").style.fill = document.querySelector("#tintfillcontrol").value;
-            document.querySelector("#tintlayerXtra").style.fill = document.querySelector("#tintfillcontrol").value;
-            document.querySelector("#tintlayer").setAttribute("fill-opacity", parseFloat(document.querySelector("#tintfillcontrol").value) / 100);
-            if (parseFloat(document.querySelector("#tintfillcontrol").value) > 100) {
-                document.querySelector("#tintlayerXtra").setAttribute("fill-opacity", parseFloat(document.querySelector("#tintfillcontrol").value) / 100 - 1);
-                document.querySelector("#tintlayer").setAttribute("fill-opacity", "1");
-            }
-            else {
-                document.querySelector("#tintlayerXtra").setAttribute("fill-opacity", "0");
-            }
-
-            newPreview();
-
+            applyPreset(text);
         });
         fR.readAsText(file);
     });
