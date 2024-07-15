@@ -275,18 +275,26 @@ function applyPreset(text) {
     newPreview();
 }
 
-document.querySelector("#importPresetBtn").addEventListener("click", () => {
-    let fileUpload = document.createElement("input");
-    fileUpload.type = "file";
-    fileUpload.accept = ".ctxml";
-    fileUpload.addEventListener("change", (e) => {
-        let file = e.target.files[0];
-        let fR = new FileReader();
-        fR.addEventListener("loadend", (e2) => {
-            let text = e2.target.result;
-            applyPreset(text);
+document.querySelector("#importPresetBtn").addEventListener("change", (e) => {
+    if (e.target.value == "import_preset") {
+        let fileUpload = document.createElement("input");
+        fileUpload.type = "file";
+        fileUpload.accept = ".ctxml";
+        fileUpload.addEventListener("change", (e2) => {
+            let file = e2.target.files[0];
+            let fR = new FileReader();
+            fR.addEventListener("loadend", (e3) => {
+                let text = e3.target.result;
+                applyPreset(text);
+            });
+            fR.readAsText(file);
         });
-        fR.readAsText(file);
-    });
-    fileUpload.click();
+        fileUpload.click();
+    }
+    else {
+        applyPreset(e.target.value);
+    }
+
+    e.target.value = "nothing";
+    e.target.blur();
 });
