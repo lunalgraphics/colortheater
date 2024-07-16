@@ -1,7 +1,6 @@
 for (let colourInput of document.querySelectorAll("input[type=color]")) {
     let wrapper = document.createElement("div");
     wrapper.style.display = "inline-block";
-    wrapper.className = "colourInputWrapper";
     colourInput.parentElement.insertBefore(wrapper, colourInput);
     colourInput.remove();
     wrapper.appendChild(colourInput);
