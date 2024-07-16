@@ -236,8 +236,10 @@ function applyPreset(text) {
     applyBasicAdj();
     let splitToningNode = xDoc.querySelector("splitToning");
     document.querySelector("#toningHColorCtrl").value = splitToningNode.getAttribute("hColor");
+    document.querySelector("#toningHColorCtrl").dispatchEvent(new Event("input"));
     document.querySelector("#toningHAmntCtrl").value = splitToningNode.getAttribute("hAmnt");
     document.querySelector("#toningSColorCtrl").value = splitToningNode.getAttribute("sColor");
+    document.querySelector("#toningSColorCtrl").dispatchEvent(new Event("input"));
     document.querySelector("#toningSAmntCtrl").value = splitToningNode.getAttribute("sAmnt");
     updateSplitToning();
     for (let row = 0; row < 4; row++) {
@@ -251,6 +253,7 @@ function applyPreset(text) {
     document.querySelector("#colorgrade feColorMatrix").setAttribute("values", arraytostring(colorMatrixValues));
     let vignetteNode = xDoc.querySelector("vignette");
     document.querySelector("#vignettecolorcontrol").value = vignetteNode.getAttribute("color");
+    document.querySelector("#vignettecolorcontrol").dispatchEvent(new Event("input"));
     document.querySelector("#vignettescalecontrol").value = vignetteNode.getAttribute("scale");
     document.querySelector("#vignettefillcontrol").value = vignetteNode.getAttribute("fill");
     document.querySelector("#vignetteBlendingCtrl").value = vignetteNode.getAttribute("blending");
@@ -260,6 +263,7 @@ function applyPreset(text) {
     document.querySelector("#vignetteRect").style.mixBlendMode = document.querySelector("#vignetteBlendingCtrl").value;
     let tintNode = xDoc.querySelector("tint");
     document.querySelector("#tintcolorcontrol").value = tintNode.getAttribute("color");
+    document.querySelector("#tintcolorcontrol").dispatchEvent(new Event("input"));
     document.querySelector("#tintfillcontrol").value = tintNode.getAttribute("fill");
     document.querySelector("#tintlayer").style.fill = document.querySelector("#tintcolorcontrol").value;
     document.querySelector("#tintlayerXtra").style.fill = document.querySelector("#tintcolorcontrol").value;
