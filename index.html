@@ -41,7 +41,11 @@
         </div>
         <div id="controlpanel">
             <div style="text-align: center;">
-                <button id="importPresetBtn">Import Preset</button>
+                <select id="importPresetBtn">
+                    <option disabled selected hidden value="nothing">Use a Preset</option>
+                    <option value="import_preset">Import .ctxml File</option>
+                    <optgroup label="Built-in Presets" id="builtInPresetsGroup"></optgroup>
+                </select>
                 <button id="exportPresetBtn">Export Preset</button>
             </div>
             <hr />
@@ -105,5 +109,7 @@
         </div>
         <script src="canvStuff.js"></script>
         <script src="code.js"></script>
+        <script src="builtInPresets.js"></script>
+        <script src="newColourInput.js"></script>
     </body>
 </html>
