@@ -37,6 +37,14 @@ let builtInPresets = [
         "name": "Dark Sky",
         "value": `<ctpreset><basicAdj brightness="88" contrast="120" saturate="50" sepia="0"/><splitToning hColor="#ffdd00" hAmnt="0" sColor="#ff3300" sAmnt="12"/><cMatrix><cell id="cell00">100</cell><cell id="cell01">0</cell><cell id="cell02">0</cell><cell id="cell03">0</cell><cell id="cell04">0</cell><cell id="cell10">0</cell><cell id="cell11">100</cell><cell id="cell12">10</cell><cell id="cell13">0</cell><cell id="cell14">0</cell><cell id="cell20">0</cell><cell id="cell21">0</cell><cell id="cell22">120</cell><cell id="cell23">0</cell><cell id="cell24">0</cell><cell id="cell30">0</cell><cell id="cell31">0</cell><cell id="cell32">0</cell><cell id="cell33">100</cell><cell id="cell34">0</cell></cMatrix><vignette color="#000000" scale="50" fill="0" blending="multiply"/><tint color="#004080" fill="0"/></ctpreset>`,
     },
+    {
+        "name": "Light of Dusk",
+        "value": `<ctpreset><basicAdj brightness="95" contrast="111.00000000000001" saturate="100" sepia="0"/><splitToning hColor="#ff7b00" hAmnt="20" sColor="#7300ff" sAmnt="20"/><cMatrix><cell id="cell00">100</cell><cell id="cell01">0</cell><cell id="cell02">0</cell><cell id="cell03">0</cell><cell id="cell04">4</cell><cell id="cell10">0</cell><cell id="cell11">100</cell><cell id="cell12">0</cell><cell id="cell13">0</cell><cell id="cell14">0</cell><cell id="cell20">0</cell><cell id="cell21">0</cell><cell id="cell22">100</cell><cell id="cell23">0</cell><cell id="cell24">0</cell><cell id="cell30">0</cell><cell id="cell31">0</cell><cell id="cell32">0</cell><cell id="cell33">100</cell><cell id="cell34">0</cell></cMatrix><vignette color="#000000" scale="56" fill="56" blending="overlay"/><tint color="#004080" fill="0"/></ctpreset>`,
+    },
+    {
+        "name": "Gotham",
+        "value": `<ctpreset><basicAdj brightness="85" contrast="128" saturate="25" sepia="0"/><splitToning hColor="#ff5400" hAmnt="0" sColor="#0081ff" sAmnt="0"/><cMatrix><cell id="cell00">120</cell><cell id="cell01">0</cell><cell id="cell02">0</cell><cell id="cell03">0</cell><cell id="cell04">10</cell><cell id="cell10">0</cell><cell id="cell11">110</cell><cell id="cell12">0</cell><cell id="cell13">0</cell><cell id="cell14">10</cell><cell id="cell20">0</cell><cell id="cell21">0</cell><cell id="cell22">100</cell><cell id="cell23">0</cell><cell id="cell24">10</cell><cell id="cell30">0</cell><cell id="cell31">0</cell><cell id="cell32">0</cell><cell id="cell33">100</cell><cell id="cell34">0</cell></cMatrix><vignette color="#000000" scale="50" fill="50" blending="overlay"/><tint color="#004080" fill="0"/></ctpreset>`,
+    },
 ];
 
 for (let preset of builtInPresets) {
