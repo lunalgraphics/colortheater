@@ -104,7 +104,7 @@ button {
 
 #importPresetBtn {
     padding: 2px 6px;
-    width: 14ch;
+    width: 111px;
 }
 
 @media only screen and (max-width: 555px) {
