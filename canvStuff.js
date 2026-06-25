@@ -1,38 +1,88 @@
-function applyColorMatrix(ctx, width, height, matrix) {
-    // 1. Get raw pixel data
-    const imgData = ctx.getImageData(0, 0, width, height);
-    const data = imgData.data;
+function applyGPUColorMatrix(imageElement, matrix) {
+    const glCanvas = document.createElement('canvas');
+    const gl = glCanvas.getContext('webgl');
+    if (!gl) return null;
 
-    // 2. Unpack matrix rows for faster loop execution
-    const [
-        rR, rG, rB, rA, rO,  // Red row: multipliers + offset
-        gR, gG, gB, gA, gO,  // Green row
-        bR, bG, bB, bA, bO,  // Blue row
-        aR, aG, aB, aA, aO   // Alpha row
-    ] = matrix;
+    // Use the actual backing store dimensions (works for both canvas and image elements)
+    const w = imageElement.naturalWidth || imageElement.width;
+    const h = imageElement.naturalHeight || imageElement.height;
+    glCanvas.width = w;
+    glCanvas.height = h;
 
-    // 3. Convert SVG decimal offsets (0-1) into 8-bit canvas offsets (0-255)
-    const rOffset = rO * 255;
-    const gOffset = gO * 255;
-    const bOffset = bO * 255;
-    const aOffset = aO * 255;
+    // Vertex shader (passes coordinates through)
+    const vs = `
+        attribute vec2 p;
+        void main() { gl_Position = vec4(p, 0, 1); }
+    `;
 
-    // 4. Process every pixel (4 array slots per pixel: R, G, B, A)
-    for (let i = 0; i < data.length; i += 4) {
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        const a = data[i + 3];
+    // Fragment shader (executes the 4x5 SVG color matrix on the GPU)
+    const fs = `
+        precision mediump float;
+        uniform sampler2D tex;
+        uniform mat4 u_matrix;
+        uniform vec4 u_offset;
+        uniform vec2 u_resolution;
+        void main() {
+            vec2 uv = gl_FragCoord.xy / u_resolution;
+            vec4 color = texture2D(tex, vec2(uv.x, 1.0 - uv.y));
+            gl_FragColor = (color * u_matrix) + u_offset;
+        }
+    `;
 
-        // Apply matrix calculations
-        data[i]     = (r * rR) + (g * rG) + (b * rB) + (a * rA) + rOffset; // New Red
-        data[i + 1] = (r * gR) + (g * gG) + (b * gB) + (a * gA) + gOffset; // New Green
-        data[i + 2] = (r * bR) + (g * bG) + (b * bB) + (a * bA) + bOffset; // New Blue
-        data[i + 3] = (r * aR) + (g * aG) + (b * aB) + (a * aA) + aOffset; // New Alpha
-    }
+    // Compile shaders and link program
+    const vsId = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vsId, vs);
+    gl.compileShader(vsId);
 
-    // 5. Write the modified pixels back to the canvas
-    ctx.putImageData(imgData, 0, 0);
+    const fsId = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fsId, fs);
+    gl.compileShader(fsId);
+
+    const program = gl.createProgram();
+    gl.attachShader(program, vsId);
+    gl.attachShader(program, fsId);
+    gl.linkProgram(program);
+    gl.useProgram(program);
+
+    // Setup geometry (fullscreen quad)
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, -1,1, 1,-1, 1,1]), gl.STATIC_DRAW);
+    const pLoc = gl.getAttribLocation(program, 'p');
+    gl.enableVertexAttribArray(pLoc);
+    gl.vertexAttribPointer(pLoc, 2, gl.FLOAT, false, 0, 0);
+
+    // Upload image as a GPU texture
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imageElement);
+
+    // Pass matrix to GPU (transposed for WebGL column-major order)
+    const matLoc = gl.getUniformLocation(program, 'u_matrix');
+    gl.uniformMatrix4fv(matLoc, false, new Float32Array([
+        matrix[0],  matrix[5],  matrix[10], matrix[15],  // R inputs
+        matrix[1],  matrix[6],  matrix[11], matrix[16],  // G inputs
+        matrix[2],  matrix[7],  matrix[12], matrix[17],  // B inputs
+        matrix[3],  matrix[8],  matrix[13], matrix[18]   // A inputs
+    ]));
+
+    // Pass offsets to GPU (SVG offsets are already 0-1, matching WebGL's color range)
+    const offsetLoc = gl.getUniformLocation(program, 'u_offset');
+    gl.uniform4fv(offsetLoc, new Float32Array([matrix[4], matrix[9], matrix[14], matrix[19]]));
+
+    // Pass resolution and set viewport to match full canvas dimensions
+    const resLoc = gl.getUniformLocation(program, 'u_resolution');
+    gl.uniform2f(resLoc, w, h);
+    gl.viewport(0, 0, w, h);
+
+    // Draw
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+    return glCanvas;
 }
 
 function newPreview() {
@@ -60,7 +110,11 @@ function newPreview() {
     ctx.drawImage(baseImage, 0, 0);
     ctx.restore();
     ctx.save();
-    applyColorMatrix(ctx, canv.width, canv.height, [...colorMatrixValues[0], ...colorMatrixValues[1], ...colorMatrixValues[2], ...colorMatrixValues[3]]);
+    var matrix = [...colorMatrixValues[0], ...colorMatrixValues[1], ...colorMatrixValues[2], ...colorMatrixValues[3]];
+    var gpuResult = applyGPUColorMatrix(canv, matrix);
+    if (gpuResult) {
+        ctx.drawImage(gpuResult, 0, 0);
+    }
     ctx.restore();
     ctx.save();
     ctx.globalCompositeOperation = "soft-light";
