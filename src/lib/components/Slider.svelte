@@ -61,8 +61,8 @@
         display: inline-block;
         vertical-align: middle;
         position: relative;
-        /* TODO: make size dynamic */
-        width: 160px;
+        width: var(--width, 160px);
+        height: var(--height, 24px);
     }
 
     .slider-flexbox[data-direction="horizontal"] {
@@ -144,5 +144,9 @@
     .slider-flexbox[data-direction="vertical"] .slider-thumb:hover {
         background-color: var(--focus-color);
         cursor: ns-resize;
+    }
+
+    input[type=number] {
+        width: 50px!important;
     }
 </style>
