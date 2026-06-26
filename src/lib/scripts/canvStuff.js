@@ -110,7 +110,7 @@ function newPreview() {
     ctx.drawImage(baseImage, 0, 0);
     ctx.restore();
     ctx.save();
-    var matrix = [...colorMatrixValues[0], ...colorMatrixValues[1], ...colorMatrixValues[2], ...colorMatrixValues[3]];
+    var matrix = document.querySelector("#colorgrade feColorMatrix").getAttribute("values").split(/\s+/).map((x) => parseFloat(x));
     var gpuResult = applyGPUColorMatrix(canv, matrix);
     if (gpuResult) {
         ctx.drawImage(gpuResult, 0, 0);
@@ -150,3 +150,5 @@ function newPreview() {
     ctx.globalAlpha = parseFloat(vignetteRect.getAttribute("fill-opacity"));
     ctx.drawImage(vignetteBuffer, -canv.width * 0.22, -canv.height * 0.22, canv.width * 1.44, canv.height * 1.44);
 }
+
+export default newPreview;
