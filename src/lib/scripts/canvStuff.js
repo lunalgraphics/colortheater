@@ -112,22 +112,18 @@ function flattenColorMatrix(matrix) {
     return flat;
 }
 
-/**
- * Apply a 4x5 color matrix to an image element using WebGL for GPU acceleration.
- *
- * @param {HTMLCanvasElement|HTMLImageElement} imageElement - Source to read pixels from
- * @param {number[]} matrix - Flat 20-element matrix (values in 0–1 range)
- * @returns {HTMLCanvasElement|null} Canvas with the result, or null if WebGL unavailable
- */
-function applyGPUColorMatrix(imageElement, matrix) {
-    const glCanvas = document.createElement("canvas");
-    const gl = glCanvas.getContext("webgl");
-    if (!gl) return null;
+// --- Singleton WebGL context for color matrix operations ---
+// Avoids the cost of creating a canvas, compiling shaders, and linking a program every frame.
 
-    const w = imageElement.naturalWidth || imageElement.width;
-    const h = imageElement.naturalHeight || imageElement.height;
-    glCanvas.width = w;
-    glCanvas.height = h;
+/** @type {{ canvas: HTMLCanvasElement, gl: WebGLRenderingContext, program: WebGLProgram, texture: WebGLTexture, locs: { matrix: WebGLUniformLocation, offset: WebGLUniformLocation, resolution: WebGLUniformLocation } } | null} */
+let glState = null;
+
+function getGLState() {
+    if (glState) return glState;
+
+    const canvas = document.createElement("canvas");
+    const gl = canvas.getContext("webgl", { premultipliedAlpha: false });
+    if (!gl) return null;
 
     const vs = `
         attribute vec2 p;
@@ -162,7 +158,7 @@ function applyGPUColorMatrix(imageElement, matrix) {
     gl.linkProgram(program);
     gl.useProgram(program);
 
-    // Fullscreen quad
+    // Fullscreen quad (permanent buffer)
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, -1,1, 1,-1, 1,1]), gl.STATIC_DRAW);
@@ -170,43 +166,65 @@ function applyGPUColorMatrix(imageElement, matrix) {
     gl.enableVertexAttribArray(pLoc);
     gl.vertexAttribPointer(pLoc, 2, gl.FLOAT, false, 0, 0);
 
-    // Upload source as texture
+    // Create a reusable texture
     const texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+    // Cache uniform locations
+    const locs = {
+        matrix: gl.getUniformLocation(program, "u_matrix"),
+        offset: gl.getUniformLocation(program, "u_offset"),
+        resolution: gl.getUniformLocation(program, "u_resolution"),
+    };
+
+    glState = { canvas, gl, program, texture, locs };
+    return glState;
+}
+
+/**
+ * Apply a 4x5 color matrix to an image element using WebGL for GPU acceleration.
+ * Uses a persistent WebGL context to avoid per-frame setup costs.
+ *
+ * @param {HTMLCanvasElement|HTMLImageElement} imageElement - Source to read pixels from
+ * @param {number[]} matrix - Flat 20-element matrix (values in 0–1 range)
+ * @returns {HTMLCanvasElement|null} Canvas with the result, or null if WebGL unavailable
+ */
+function applyGPUColorMatrix(imageElement, matrix) {
+    const state = getGLState();
+    if (!state) return null;
+
+    const { canvas, gl, texture, locs } = state;
+
+    const w = imageElement.naturalWidth || imageElement.width;
+    const h = imageElement.naturalHeight || imageElement.height;
+
+    // Resize only when dimensions change
+    if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w;
+        canvas.height = h;
+    }
+
+    // Upload source pixels into the existing texture
+    gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imageElement);
 
-    // Pass 4x4 portion of the matrix (transposed for column-major WebGL)
-    // matrix layout: [R_r, R_g, R_b, R_a, R_offset, G_r, G_g, ...]
-    const matLoc = gl.getUniformLocation(program, "u_matrix");
-    gl.uniformMatrix4fv(matLoc, false, new Float32Array([
+    // Update uniforms
+    gl.uniformMatrix4fv(locs.matrix, false, new Float32Array([
         matrix[0],  matrix[5],  matrix[10], matrix[15],
         matrix[1],  matrix[6],  matrix[11], matrix[16],
         matrix[2],  matrix[7],  matrix[12], matrix[17],
         matrix[3],  matrix[8],  matrix[13], matrix[18],
     ]));
-
-    // Pass offsets
-    const offsetLoc = gl.getUniformLocation(program, "u_offset");
-    gl.uniform4fv(offsetLoc, new Float32Array([matrix[4], matrix[9], matrix[14], matrix[19]]));
-
-    // Resolution + viewport
-    const resLoc = gl.getUniformLocation(program, "u_resolution");
-    gl.uniform2f(resLoc, w, h);
+    gl.uniform4fv(locs.offset, new Float32Array([matrix[4], matrix[9], matrix[14], matrix[19]]));
+    gl.uniform2f(locs.resolution, w, h);
     gl.viewport(0, 0, w, h);
 
     // Draw
     gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-    // Cleanup GPU resources
-    gl.deleteTexture(texture);
-    gl.deleteBuffer(buffer);
-    gl.deleteShader(vsId);
-    gl.deleteShader(fsId);
-    gl.deleteProgram(program);
-
-    return glCanvas;
+    return canvas;
 }
