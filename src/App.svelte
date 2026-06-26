@@ -7,6 +7,8 @@
     import Photopea from "photopea";
     import bannerImg from "./lib/assets/banner.png";
 
+    import ControlPanel from "./lib/components/ControlPanel.svelte";
+
     let canvasEl;
     let imageEl;
     let showWelcome = $state(true);
@@ -77,45 +79,6 @@
         }
     }
 
-    function handleExportPreset() {
-        const json = exportPreset(gradeState);
-        const blob = new Blob([json], { type: "application/json" });
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = "preset.ctpreset.json";
-        a.click();
-    }
-
-    function handlePresetChange(e) {
-        const val = e.target.value;
-        if (val === "import_preset") {
-            const fileInput = document.createElement("input");
-            fileInput.type = "file";
-            fileInput.accept = ".ctxml,.json";
-            fileInput.onchange = (e2) => {
-                const file = e2.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onloadend = (e3) => importPreset(e3.target.result, gradeState);
-                reader.readAsText(file);
-            };
-            fileInput.click();
-        } else if (val !== "nothing") {
-            // Find the preset by name
-            const preset = builtInPresets.find(p => p.name === val);
-            if (preset) applyPreset(gradeState, preset);
-        }
-        e.target.value = "nothing";
-    }
-
-    function handleMatrixInput(row, col, e) {
-        const val = parseFloat(e.target.value) || 0;
-        // Create a new matrix array to trigger reactivity
-        const newMatrix = gradeState.colorMatrix.map(r => [...r]);
-        newMatrix[row][col] = val;
-        gradeState.colorMatrix = newMatrix;
-    }
-
     onMount(() => {
         isPhotopea = new URLSearchParams(location.search).get("portal") === "photopea";
 
@@ -135,84 +98,7 @@
     <canvas bind:this={canvasEl}></canvas>
 </div>
 
-<div id="controlpanel">
-    <div style="text-align: center;">
-        <select onchange={handlePresetChange}>
-            <option disabled selected hidden value="nothing">Use a Preset</option>
-            <option value="import_preset">Import Preset File</option>
-            <optgroup label="Built-in Presets">
-                {#each builtInPresets as preset}
-                    <option value={preset.name}>{preset.name}</option>
-                {/each}
-            </optgroup>
-        </select>
-        <button onclick={handleExportPreset}>Export Preset</button>
-    </div>
-    <hr />
-
-    <i>Basic Adjustments</i> <br />
-    Brightness: <input type="number" bind:value={gradeState.brightness} min="0" max="200" /> <br />
-    Contrast: <input type="number" bind:value={gradeState.contrast} min="0" max="200" /> <br />
-    Saturation: <input type="number" bind:value={gradeState.saturation} min="0" max="200" /> <br />
-    Sepia: <input type="number" bind:value={gradeState.sepia} min="0" max="100" /> <br />
-    <hr />
-
-    <i>Color Matrix</i> <br />
-    <table style="width: 100%;" id="cmatrixTable">
-        <tbody>
-            <tr>
-                <td></td>
-                <td style="color: #800000">R</td>
-                <td style="color: #008000">G</td>
-                <td style="color: #000080">B</td>
-                <td style="color: #808080">A</td>
-                <td style="color: #EEEEEE">+/-</td>
-            </tr>
-            {#each ["R", "G", "B", "A"] as label, row}
-                <tr>
-                    <td style="color: {['#800000','#008000','#000080','#808080'][row]}">{label}</td>
-                    {#each [0,1,2,3,4] as col}
-                        <td>
-                            <input
-                                type="number"
-                                value={gradeState.colorMatrix[row][col]}
-                                oninput={(e) => handleMatrixInput(row, col, e)}
-                                step="1"
-                                style="width: 100%; box-sizing: border-box;"
-                            />
-                        </td>
-                    {/each}
-                </tr>
-            {/each}
-        </tbody>
-    </table>
-    <hr />
-
-    <i>Tint</i> <br />
-    Color: <input type="color" bind:value={gradeState.tintColor} /> <br />
-    Amount: <input type="number" bind:value={gradeState.tintAmount} min="0" max="200" step="1" />
-    <hr />
-
-    <i>Split Toning</i> <br />
-    Highlights: <br />
-    - Color: <input type="color" bind:value={gradeState.highlightColor} /> <br />
-    - Amount: <input type="number" bind:value={gradeState.highlightAmount} min="0" max="100" /> <br />
-    Shadows: <br />
-    - Color: <input type="color" bind:value={gradeState.shadowColor} /> <br />
-    - Amount: <input type="number" bind:value={gradeState.shadowAmount} min="0" max="100" /> <br />
-    <hr />
-
-    <i>Vignette</i> <br />
-    Color: <input type="color" bind:value={gradeState.vignetteColor} /> <br />
-    Size: <input type="number" bind:value={gradeState.vignetteSize} min="0" max="100" /> <br />
-    Opacity: <input type="number" bind:value={gradeState.vignetteOpacity} min="0" max="100" step="1" /> <br />
-    Blending: <select bind:value={gradeState.vignetteBlending}>
-        <option value="multiply">Multiply</option>
-        <option value="overlay">Overlay</option>
-        <option value="soft-light">Soft Light</option>
-        <option value="screen">Screen</option>
-    </select>
-</div>
+<ControlPanel />
 
 <div id="bottompanel">
     <button onclick={handleExport}>{isPhotopea ? "Finish" : "Export as PNG"}</button>
