@@ -13,10 +13,7 @@ body {
     top: 0;
 }
 
-svg {
-    width: 0;
-    height: 0;
-}
+
 
 #controlpanel {
     position: fixed;

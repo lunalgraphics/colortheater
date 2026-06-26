@@ -1,57 +1,257 @@
-export let builtInPresets = [
+/**
+ * Built-in presets as plain objects matching the gradeState shape.
+ * Values are in display units (percentages, hex colors).
+ */
+export const builtInPresets = [
     {
-        "name": "Default",
-        "value": `<ctpreset><basicAdj brightness="100" contrast="100" saturate="100" sepia="0"/><splitToning hColor="#ff5400" hAmnt="0" sColor="#0081ff" sAmnt="0"/><cMatrix><cell id="cell00">100</cell><cell id="cell01">0</cell><cell id="cell02">0</cell><cell id="cell03">0</cell><cell id="cell04">0</cell><cell id="cell10">0</cell><cell id="cell11">100</cell><cell id="cell12">0</cell><cell id="cell13">0</cell><cell id="cell14">0</cell><cell id="cell20">0</cell><cell id="cell21">0</cell><cell id="cell22">100</cell><cell id="cell23">0</cell><cell id="cell24">0</cell><cell id="cell30">0</cell><cell id="cell31">0</cell><cell id="cell32">0</cell><cell id="cell33">100</cell><cell id="cell34">0</cell></cMatrix><vignette color="#000000" scale="50" fill="0" blending="multiply"/><tint color="#004080" fill="0"/></ctpreset>`,
+        name: "Default",
+        values: {
+            brightness: 100, contrast: 100, saturation: 100, sepia: 0,
+            colorMatrix: [[100,0,0,0,0],[0,100,0,0,0],[0,0,100,0,0],[0,0,0,100,0]],
+            tintColor: "#004080", tintAmount: 0,
+            highlightColor: "#ff5400", highlightAmount: 0,
+            shadowColor: "#0081ff", shadowAmount: 0,
+            vignetteColor: "#000000", vignetteSize: 50, vignetteOpacity: 0, vignetteBlending: "multiply",
+        },
     },
     {
-        "name": "Black & White Film",
-        "value": `<ctpreset><basicAdj brightness="80" contrast="133" saturate="100" sepia="0"/><splitToning hColor="#ff5400" hAmnt="0" sColor="#0081ff" sAmnt="0"/><cMatrix><cell id="cell00">33</cell><cell id="cell01">33</cell><cell id="cell02">33</cell><cell id="cell03">0</cell><cell id="cell04">20</cell><cell id="cell10">33</cell><cell id="cell11">33</cell><cell id="cell12">33</cell><cell id="cell13">0</cell><cell id="cell14">20</cell><cell id="cell20">33</cell><cell id="cell21">33</cell><cell id="cell22">33</cell><cell id="cell23">0</cell><cell id="cell24">20</cell><cell id="cell30">0</cell><cell id="cell31">0</cell><cell id="cell32">0</cell><cell id="cell33">100</cell><cell id="cell34">0</cell></cMatrix><vignette color="#000000" scale="50" fill="0" blending="multiply"/><tint color="#004080" fill="0"/></ctpreset>`,
+        name: "Black & White Film",
+        values: {
+            brightness: 80, contrast: 133, saturation: 100, sepia: 0,
+            colorMatrix: [[33,33,33,0,20],[33,33,33,0,20],[33,33,33,0,20],[0,0,0,100,0]],
+            tintColor: "#004080", tintAmount: 0,
+            highlightColor: "#ff5400", highlightAmount: 0,
+            shadowColor: "#0081ff", shadowAmount: 0,
+            vignetteColor: "#000000", vignetteSize: 50, vignetteOpacity: 0, vignetteBlending: "multiply",
+        },
     },
     {
-        "name": "Golden Hour",
-        "value": `<ctpreset><basicAdj brightness="105" contrast="105" saturate="80" sepia="10"/><splitToning hColor="#ff5400" hAmnt="40" sColor="#0081ff" sAmnt="25"/><cMatrix><cell id="cell00">100</cell><cell id="cell01">0</cell><cell id="cell02">0</cell><cell id="cell03">0</cell><cell id="cell04">0</cell><cell id="cell10">0</cell><cell id="cell11">100</cell><cell id="cell12">0</cell><cell id="cell13">0</cell><cell id="cell14">0</cell><cell id="cell20">0</cell><cell id="cell21">0</cell><cell id="cell22">90</cell><cell id="cell23">0</cell><cell id="cell24">0</cell><cell id="cell30">0</cell><cell id="cell31">0</cell><cell id="cell32">0</cell><cell id="cell33">100</cell><cell id="cell34">0</cell></cMatrix><vignette color="#000000" scale="70" fill="70" blending="soft-light"/><tint color="#004080" fill="20"/></ctpreset>`,
+        name: "Golden Hour",
+        values: {
+            brightness: 105, contrast: 105, saturation: 80, sepia: 10,
+            colorMatrix: [[100,0,0,0,0],[0,100,0,0,0],[0,0,90,0,0],[0,0,0,100,0]],
+            tintColor: "#004080", tintAmount: 20,
+            highlightColor: "#ff5400", highlightAmount: 40,
+            shadowColor: "#0081ff", shadowAmount: 25,
+            vignetteColor: "#000000", vignetteSize: 70, vignetteOpacity: 70, vignetteBlending: "soft-light",
+        },
     },
     {
-        "name": "Scarlet Carson",
-        "value": `<ctpreset><basicAdj brightness="100" contrast="100" saturate="100" sepia="0"/><splitToning hColor="#ff5400" hAmnt="0" sColor="#0081ff" sAmnt="0"/><cMatrix><cell id="cell00">80</cell><cell id="cell01">15</cell><cell id="cell02">10</cell><cell id="cell03">0</cell><cell id="cell04">-8</cell><cell id="cell10">33</cell><cell id="cell11">33</cell><cell id="cell12">33</cell><cell id="cell13">0</cell><cell id="cell14">0</cell><cell id="cell20">33</cell><cell id="cell21">33</cell><cell id="cell22">33</cell><cell id="cell23">0</cell><cell id="cell24">0</cell><cell id="cell30">0</cell><cell id="cell31">0</cell><cell id="cell32">0</cell><cell id="cell33">100</cell><cell id="cell34">0</cell></cMatrix><vignette color="#000000" scale="50" fill="0" blending="multiply"/><tint color="#800000" fill="42"/></ctpreset>`,
+        name: "Scarlet Carson",
+        values: {
+            brightness: 100, contrast: 100, saturation: 100, sepia: 0,
+            colorMatrix: [[80,15,10,0,-8],[33,33,33,0,0],[33,33,33,0,0],[0,0,0,100,0]],
+            tintColor: "#800000", tintAmount: 42,
+            highlightColor: "#ff5400", highlightAmount: 0,
+            shadowColor: "#0081ff", shadowAmount: 0,
+            vignetteColor: "#000000", vignetteSize: 50, vignetteOpacity: 0, vignetteBlending: "multiply",
+        },
     },
     {
-        "name": "Parchment Dream",
-        "value": `<ctpreset><basicAdj brightness="96" contrast="100" saturate="80" sepia="0"/><splitToning hColor="#ff5400" hAmnt="20" sColor="#0081ff" sAmnt="30"/><cMatrix><cell id="cell00">100</cell><cell id="cell01">0</cell><cell id="cell02">0</cell><cell id="cell03">0</cell><cell id="cell04">0</cell><cell id="cell10">0</cell><cell id="cell11">100</cell><cell id="cell12">0</cell><cell id="cell13">0</cell><cell id="cell14">0</cell><cell id="cell20">0</cell><cell id="cell21">0</cell><cell id="cell22">100</cell><cell id="cell23">0</cell><cell id="cell24">0</cell><cell id="cell30">0</cell><cell id="cell31">0</cell><cell id="cell32">0</cell><cell id="cell33">100</cell><cell id="cell34">0</cell></cMatrix><vignette color="#000000" scale="50" fill="0" blending="multiply"/><tint color="#a07d40" fill="120"/></ctpreset>`,
+        name: "Parchment Dream",
+        values: {
+            brightness: 96, contrast: 100, saturation: 80, sepia: 0,
+            colorMatrix: [[100,0,0,0,0],[0,100,0,0,0],[0,0,100,0,0],[0,0,0,100,0]],
+            tintColor: "#a07d40", tintAmount: 120,
+            highlightColor: "#ff5400", highlightAmount: 20,
+            shadowColor: "#0081ff", shadowAmount: 30,
+            vignetteColor: "#000000", vignetteSize: 50, vignetteOpacity: 0, vignetteBlending: "multiply",
+        },
     },
     {
-        "name": "Blue Medallion",
-        "value": `<ctpreset><basicAdj brightness="100" contrast="100" saturate="70" sepia="0"/><splitToning hColor="#ffe600" hAmnt="35" sColor="#4066bf" sAmnt="53"/><cMatrix><cell id="cell00">100</cell><cell id="cell01">0</cell><cell id="cell02">0</cell><cell id="cell03">0</cell><cell id="cell04">0</cell><cell id="cell10">0</cell><cell id="cell11">100</cell><cell id="cell12">0</cell><cell id="cell13">0</cell><cell id="cell14">0</cell><cell id="cell20">0</cell><cell id="cell21">0</cell><cell id="cell22">100</cell><cell id="cell23">0</cell><cell id="cell24">0</cell><cell id="cell30">0</cell><cell id="cell31">0</cell><cell id="cell32">0</cell><cell id="cell33">100</cell><cell id="cell34">0</cell></cMatrix><vignette color="#000000" scale="50" fill="0" blending="multiply"/><tint color="#004080" fill="20"/></ctpreset>`,
+        name: "Blue Medallion",
+        values: {
+            brightness: 100, contrast: 100, saturation: 70, sepia: 0,
+            colorMatrix: [[100,0,0,0,0],[0,100,0,0,0],[0,0,100,0,0],[0,0,0,100,0]],
+            tintColor: "#004080", tintAmount: 20,
+            highlightColor: "#ffe600", highlightAmount: 35,
+            shadowColor: "#4066bf", shadowAmount: 53,
+            vignetteColor: "#000000", vignetteSize: 50, vignetteOpacity: 0, vignetteBlending: "multiply",
+        },
     },
     {
-        "name": "Morning Blues",
-        "value": `<ctpreset><basicAdj brightness="110.00000000000001" contrast="100" saturate="80" sepia="0"/><splitToning hColor="#00ddff" hAmnt="20" sColor="#004cff" sAmnt="20"/><cMatrix><cell id="cell00">100</cell><cell id="cell01">0</cell><cell id="cell02">0</cell><cell id="cell03">0</cell><cell id="cell04">0</cell><cell id="cell10">0</cell><cell id="cell11">100</cell><cell id="cell12">0</cell><cell id="cell13">0</cell><cell id="cell14">0</cell><cell id="cell20">0</cell><cell id="cell21">0</cell><cell id="cell22">100</cell><cell id="cell23">0</cell><cell id="cell24">0</cell><cell id="cell30">0</cell><cell id="cell31">0</cell><cell id="cell32">0</cell><cell id="cell33">100</cell><cell id="cell34">0</cell></cMatrix><vignette color="#000000" scale="50" fill="0" blending="multiply"/><tint color="#005580" fill="30"/></ctpreset>`,
+        name: "Morning Blues",
+        values: {
+            brightness: 110, contrast: 100, saturation: 80, sepia: 0,
+            colorMatrix: [[100,0,0,0,0],[0,100,0,0,0],[0,0,100,0,0],[0,0,0,100,0]],
+            tintColor: "#005580", tintAmount: 30,
+            highlightColor: "#00ddff", highlightAmount: 20,
+            shadowColor: "#004cff", shadowAmount: 20,
+            vignetteColor: "#000000", vignetteSize: 50, vignetteOpacity: 0, vignetteBlending: "multiply",
+        },
     },
     {
-        "name": "Integral Anomaly",
-        "value": `<ctpreset><basicAdj brightness="90" contrast="100" saturate="70" sepia="0"/><splitToning hColor="#b8d71d" hAmnt="30" sColor="#35b69c" sAmnt="50"/><cMatrix><cell id="cell00">100</cell><cell id="cell01">0</cell><cell id="cell02">0</cell><cell id="cell03">0</cell><cell id="cell04">0</cell><cell id="cell10">0</cell><cell id="cell11">100</cell><cell id="cell12">0</cell><cell id="cell13">0</cell><cell id="cell14">0</cell><cell id="cell20">0</cell><cell id="cell21">0</cell><cell id="cell22">100</cell><cell id="cell23">0</cell><cell id="cell24">0</cell><cell id="cell30">0</cell><cell id="cell31">0</cell><cell id="cell32">0</cell><cell id="cell33">100</cell><cell id="cell34">0</cell></cMatrix><vignette color="#000000" scale="50" fill="0" blending="multiply"/><tint color="#338e4d" fill="30"/></ctpreset>`,
+        name: "Integral Anomaly",
+        values: {
+            brightness: 90, contrast: 100, saturation: 70, sepia: 0,
+            colorMatrix: [[100,0,0,0,0],[0,100,0,0,0],[0,0,100,0,0],[0,0,0,100,0]],
+            tintColor: "#338e4d", tintAmount: 30,
+            highlightColor: "#b8d71d", highlightAmount: 30,
+            shadowColor: "#35b69c", shadowAmount: 50,
+            vignetteColor: "#000000", vignetteSize: 50, vignetteOpacity: 0, vignetteBlending: "multiply",
+        },
     },
     {
-        "name": "Dark Sky",
-        "value": `<ctpreset><basicAdj brightness="88" contrast="120" saturate="50" sepia="0"/><splitToning hColor="#ffdd00" hAmnt="0" sColor="#ff3300" sAmnt="12"/><cMatrix><cell id="cell00">100</cell><cell id="cell01">0</cell><cell id="cell02">0</cell><cell id="cell03">0</cell><cell id="cell04">0</cell><cell id="cell10">0</cell><cell id="cell11">100</cell><cell id="cell12">10</cell><cell id="cell13">0</cell><cell id="cell14">0</cell><cell id="cell20">0</cell><cell id="cell21">0</cell><cell id="cell22">120</cell><cell id="cell23">0</cell><cell id="cell24">0</cell><cell id="cell30">0</cell><cell id="cell31">0</cell><cell id="cell32">0</cell><cell id="cell33">100</cell><cell id="cell34">0</cell></cMatrix><vignette color="#000000" scale="50" fill="0" blending="multiply"/><tint color="#004080" fill="0"/></ctpreset>`,
+        name: "Dark Sky",
+        values: {
+            brightness: 88, contrast: 120, saturation: 50, sepia: 0,
+            colorMatrix: [[100,0,0,0,0],[0,100,10,0,0],[0,0,120,0,0],[0,0,0,100,0]],
+            tintColor: "#004080", tintAmount: 0,
+            highlightColor: "#ffdd00", highlightAmount: 0,
+            shadowColor: "#ff3300", shadowAmount: 12,
+            vignetteColor: "#000000", vignetteSize: 50, vignetteOpacity: 0, vignetteBlending: "multiply",
+        },
     },
     {
-        "name": "Light of Dusk",
-        "value": `<ctpreset><basicAdj brightness="95" contrast="111.00000000000001" saturate="100" sepia="0"/><splitToning hColor="#ff7b00" hAmnt="20" sColor="#7300ff" sAmnt="20"/><cMatrix><cell id="cell00">100</cell><cell id="cell01">0</cell><cell id="cell02">0</cell><cell id="cell03">0</cell><cell id="cell04">4</cell><cell id="cell10">0</cell><cell id="cell11">100</cell><cell id="cell12">0</cell><cell id="cell13">0</cell><cell id="cell14">0</cell><cell id="cell20">0</cell><cell id="cell21">0</cell><cell id="cell22">100</cell><cell id="cell23">0</cell><cell id="cell24">0</cell><cell id="cell30">0</cell><cell id="cell31">0</cell><cell id="cell32">0</cell><cell id="cell33">100</cell><cell id="cell34">0</cell></cMatrix><vignette color="#000000" scale="56" fill="56" blending="overlay"/><tint color="#004080" fill="0"/></ctpreset>`,
+        name: "Light of Dusk",
+        values: {
+            brightness: 95, contrast: 111, saturation: 100, sepia: 0,
+            colorMatrix: [[100,0,0,0,4],[0,100,0,0,0],[0,0,100,0,0],[0,0,0,100,0]],
+            tintColor: "#004080", tintAmount: 0,
+            highlightColor: "#ff7b00", highlightAmount: 20,
+            shadowColor: "#7300ff", shadowAmount: 20,
+            vignetteColor: "#000000", vignetteSize: 56, vignetteOpacity: 56, vignetteBlending: "overlay",
+        },
     },
     {
-        "name": "Gotham",
-        "value": `<ctpreset><basicAdj brightness="85" contrast="128" saturate="25" sepia="0"/><splitToning hColor="#ff5400" hAmnt="0" sColor="#0081ff" sAmnt="0"/><cMatrix><cell id="cell00">120</cell><cell id="cell01">0</cell><cell id="cell02">0</cell><cell id="cell03">0</cell><cell id="cell04">10</cell><cell id="cell10">0</cell><cell id="cell11">110</cell><cell id="cell12">0</cell><cell id="cell13">0</cell><cell id="cell14">10</cell><cell id="cell20">0</cell><cell id="cell21">0</cell><cell id="cell22">100</cell><cell id="cell23">0</cell><cell id="cell24">10</cell><cell id="cell30">0</cell><cell id="cell31">0</cell><cell id="cell32">0</cell><cell id="cell33">100</cell><cell id="cell34">0</cell></cMatrix><vignette color="#000000" scale="50" fill="50" blending="overlay"/><tint color="#004080" fill="0"/></ctpreset>`,
+        name: "Gotham",
+        values: {
+            brightness: 85, contrast: 128, saturation: 25, sepia: 0,
+            colorMatrix: [[120,0,0,0,10],[0,110,0,0,10],[0,0,100,0,10],[0,0,0,100,0]],
+            tintColor: "#004080", tintAmount: 0,
+            highlightColor: "#ff5400", highlightAmount: 0,
+            shadowColor: "#0081ff", shadowAmount: 0,
+            vignetteColor: "#000000", vignetteSize: 50, vignetteOpacity: 50, vignetteBlending: "overlay",
+        },
     },
 ];
 
-export function populatePresetPicker() {
-    let optgroup = document.querySelector("#builtInPresetsGroup");
-    
-    for (let preset of builtInPresets) {
-        let option = document.createElement("option");
-        option.value = preset["value"]
-        option.innerHTML = preset["name"];
-        optgroup.appendChild(option);
+/**
+ * Apply a preset's values to the gradeState object.
+ * @param {object} state - The gradeState reactive object
+ * @param {object} preset - A preset object from builtInPresets
+ */
+export function applyPreset(state, preset) {
+    const v = preset.values;
+    state.brightness = v.brightness;
+    state.contrast = v.contrast;
+    state.saturation = v.saturation;
+    state.sepia = v.sepia;
+    state.colorMatrix = v.colorMatrix.map(row => [...row]);
+    state.tintColor = v.tintColor;
+    state.tintAmount = v.tintAmount;
+    state.highlightColor = v.highlightColor;
+    state.highlightAmount = v.highlightAmount;
+    state.shadowColor = v.shadowColor;
+    state.shadowAmount = v.shadowAmount;
+    state.vignetteColor = v.vignetteColor;
+    state.vignetteSize = v.vignetteSize;
+    state.vignetteOpacity = v.vignetteOpacity;
+    state.vignetteBlending = v.vignetteBlending;
+}
+
+/**
+ * Serialize the current gradeState to a JSON preset string.
+ * @param {object} state - The gradeState reactive object
+ * @returns {string} JSON string
+ */
+export function exportPreset(state) {
+    return JSON.stringify({
+        version: 2,
+        brightness: state.brightness,
+        contrast: state.contrast,
+        saturation: state.saturation,
+        sepia: state.sepia,
+        colorMatrix: state.colorMatrix,
+        tintColor: state.tintColor,
+        tintAmount: state.tintAmount,
+        highlightColor: state.highlightColor,
+        highlightAmount: state.highlightAmount,
+        shadowColor: state.shadowColor,
+        shadowAmount: state.shadowAmount,
+        vignetteColor: state.vignetteColor,
+        vignetteSize: state.vignetteSize,
+        vignetteOpacity: state.vignetteOpacity,
+        vignetteBlending: state.vignetteBlending,
+    }, null, 2);
+}
+
+/**
+ * Import a preset from either the new JSON format (v2) or legacy .ctxml format.
+ * @param {string} text - Raw file content
+ * @param {object} state - The gradeState reactive object
+ */
+export function importPreset(text, state) {
+    // Try JSON first (v2 format)
+    try {
+        const data = JSON.parse(text);
+        if (data.version === 2) {
+            state.brightness = data.brightness;
+            state.contrast = data.contrast;
+            state.saturation = data.saturation;
+            state.sepia = data.sepia;
+            state.colorMatrix = data.colorMatrix.map(row => [...row]);
+            state.tintColor = data.tintColor;
+            state.tintAmount = data.tintAmount;
+            state.highlightColor = data.highlightColor;
+            state.highlightAmount = data.highlightAmount;
+            state.shadowColor = data.shadowColor;
+            state.shadowAmount = data.shadowAmount;
+            state.vignetteColor = data.vignetteColor;
+            state.vignetteSize = data.vignetteSize;
+            state.vignetteOpacity = data.vignetteOpacity;
+            state.vignetteBlending = data.vignetteBlending;
+            return;
+        }
+    } catch {
+        // Not JSON — fall through to legacy XML parser
+    }
+
+    // Legacy .ctxml format
+    const parser = new DOMParser();
+    const xDoc = parser.parseFromString(text, "text/xml");
+
+    const basicAdjNode = xDoc.querySelector("basicAdj");
+    if (basicAdjNode) {
+        state.brightness = parseFloat(basicAdjNode.getAttribute("brightness")) || 100;
+        state.contrast = parseFloat(basicAdjNode.getAttribute("contrast")) || 100;
+        state.saturation = parseFloat(basicAdjNode.getAttribute("saturate")) || 100;
+        state.sepia = parseFloat(basicAdjNode.getAttribute("sepia")) || 0;
+    }
+
+    const splitNode = xDoc.querySelector("splitToning");
+    if (splitNode) {
+        state.highlightColor = splitNode.getAttribute("hColor") || "#ff5400";
+        state.highlightAmount = parseFloat(splitNode.getAttribute("hAmnt")) || 0;
+        state.shadowColor = splitNode.getAttribute("sColor") || "#0081ff";
+        state.shadowAmount = parseFloat(splitNode.getAttribute("sAmnt")) || 0;
+    }
+
+    const cMatrixNode = xDoc.querySelector("cMatrix");
+    if (cMatrixNode) {
+        const newMatrix = [[100,0,0,0,0],[0,100,0,0,0],[0,0,100,0,0],[0,0,0,100,0]];
+        for (let row = 0; row < 4; row++) {
+            for (let col = 0; col < 5; col++) {
+                const cell = cMatrixNode.querySelector(`#cell${row}${col}`);
+                if (cell) {
+                    newMatrix[row][col] = parseFloat(cell.textContent) || 0;
+                }
+            }
+        }
+        state.colorMatrix = newMatrix;
+    }
+
+    const vigNode = xDoc.querySelector("vignette");
+    if (vigNode) {
+        state.vignetteColor = vigNode.getAttribute("color") || "#000000";
+        state.vignetteSize = parseFloat(vigNode.getAttribute("scale")) || 50;
+        state.vignetteOpacity = parseFloat(vigNode.getAttribute("fill")) || 0;
+        state.vignetteBlending = vigNode.getAttribute("blending") || "multiply";
+    }
+
+    const tintNode = xDoc.querySelector("tint");
+    if (tintNode) {
+        state.tintColor = tintNode.getAttribute("color") || "#004080";
+        state.tintAmount = parseFloat(tintNode.getAttribute("fill")) || 0;
     }
 }
