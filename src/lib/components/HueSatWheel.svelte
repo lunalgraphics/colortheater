@@ -74,7 +74,6 @@
         position: relative;
         width: 160px;
         max-width: 100%;
-        max-height: 100%;
         height: auto;
         aspect-ratio: 1 / 1;
         border-radius: 50%;
