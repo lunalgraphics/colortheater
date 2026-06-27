@@ -1,6 +1,7 @@
 <script>
     import { gradeState } from "../../state.svelte";
-    import { scrollwheelValue } from "../../svelte-attachments/scrollWheelValue.svelte";
+    import { scrollwheelValue } from "../../svelte-attachments/scrollWheelValue.svelte.js";
+    import { dragwheelValue } from "../../svelte-attachments/dragwheelValue.svelte.js";
     
     function handleMatrixInput(row, col, e) {
         const val = parseFloat(e.target.value) || 0;
@@ -40,6 +41,7 @@
                             step="1"
                             style="width: 100%; box-sizing: border-box;"
                             {@attach scrollwheelValue}
+                            {@attach dragwheelValue}
                         />
                     </td>
                 {/each}
