@@ -6,6 +6,7 @@
         backgroundImage = "",
         step = 1,
         direction = "horizontal",
+        showNumberInput = true,
     } = $props();
 
     /** @type {HTMLElement} */
@@ -38,9 +39,6 @@
     function handlePointerUp(e) {
         dragging = false;
     }
-
-    /** @type {HTMLInputElement} */
-    let numberInput;
 </script>
 
 <svelte:window onpointermove={handlePointerMove} onpointerup={handlePointerUp} />
@@ -54,7 +52,9 @@
             <div class="slider-thumb" style:--value="{(value - min) / (max - min) * 100}%" style:background-color={dragging ? "var(--focus-color)" : null}></div>
         </div>
 
-        <input type="number" bind:this={numberInput} bind:value={value} min={min} max={max} step={step} />
+        {#if showNumberInput}
+            <input type="number" class="slider-number-input" bind:value={value} min={min} max={max} step={step} />
+        {/if}
     </div>
 </div>
 
@@ -79,7 +79,7 @@
         flex-direction: column;
         gap: 8px;
         align-items: center;
-        height: 100px;
+        height: 100%;
     }
 
     .slider-flexbox[data-direction="horizontal"] .slider-range {

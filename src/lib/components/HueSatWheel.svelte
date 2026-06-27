@@ -3,6 +3,7 @@
         hue = $bindable(0),
         saturation = $bindable(0),
         lightness = $bindable(50),
+        ...rest
     } = $props();
 
     /** @type {HTMLElement} */
@@ -60,7 +61,7 @@
     onkeydown={(e) => { keysDown[e.key] = true; }} onkeyup={(e) => { delete keysDown[e.key]; }} />
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="hue-sat-wheel" bind:this={wheelEl} onpointerdown={handlePointerDown}>
+<div class="hue-sat-wheel" bind:this={wheelEl} onpointerdown={handlePointerDown} {...rest}>
     <div class="hue-wheel" style:background-image={conicGradient}></div>
     <div class="sat-wheel" style:background-image={radialGradient}></div>
     <div class="picker-scope" style:top="{scopePosition[1]}%"
@@ -78,6 +79,7 @@
         aspect-ratio: 1 / 1;
         border-radius: 50%;
         cursor: crosshair;
+        vertical-align: middle;
     }
 
     .hue-wheel {
