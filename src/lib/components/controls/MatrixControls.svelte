@@ -14,17 +14,23 @@
 <table style="width: 100%;" id="cmatrixTable">
     <tbody>
         <tr>
-            <td></td>
-            <td style="color: #800000">R</td>
-            <td style="color: #008000">G</td>
-            <td style="color: #000080">B</td>
-            <td style="color: #808080">A</td>
+            <td colspan="2"></td>
+            <td colspan="5">OUTPUT</td>
+        </tr>
+        <tr>
+            <td colspan="2"></td>
+            <td style="color: #DD0000">R</td>
+            <td style="color: #00DD00">G</td>
+            <td style="color: #0077DD">B</td>
             <td style="color: #EEEEEE">+/-</td>
         </tr>
-        {#each ["R", "G", "B", "A"] as label, row}
+        {#each ["R", "G", "B"] as label, row}
             <tr>
-                <td style="color: {['#800000','#008000','#000080','#808080'][row]}">{label}</td>
-                {#each [0,1,2,3,4] as col}
+                {#if row === 0}
+                    <td rowspan="3" style:writing-mode="sideways-lr" style:text-orientation="sideways">INPUT</td>
+                {/if}
+                <td style:color={['#DD0000','#00DD00','#0077DD','#808080'][row]} style:padding="0 7px">{label}</td>
+                {#each [0,1,2,4] as col}
                     <td>
                         <input
                             type="number"
@@ -40,3 +46,14 @@
     </tbody>
 </table>
 <hr />
+
+<style>
+    table {
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+
+    table td {
+        padding: 0;
+    }
+</style>
