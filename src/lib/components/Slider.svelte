@@ -13,16 +13,18 @@
 
     function updateValueFromPointer(e) {
         const rect = rangeEl.getBoundingClientRect();
+        let ratio;
         if (direction === "horizontal") {
             const x = e.clientX - rect.left;
-            value = Math.round(x / rect.width * max);
+            ratio = x / rect.width;
         } else {
             const y = rect.bottom - e.clientY;
-            value = Math.round(y / rect.height * max);
+            ratio = y / rect.height;
         }
+        ratio = Math.max(0, Math.min(1, ratio));
+        value = Math.round((min + ratio * (max - min)) / step) * step;
         if (value < min) value = min;
         if (value > max) value = max;
-        value = Math.round(value / step) * step;
     }
 
     let dragging = $state(false);
@@ -49,7 +51,7 @@
             style:cursor={dragging ? (direction === "horizontal" ? "ew-resize" : "ns-resize") : null}
             role="slider" tabindex="0" aria-valuenow={value}>
             <div class="slider-track" style:background-image={backgroundImage || null}></div>
-            <div class="slider-thumb" style:--value="{value}%" style:background-color={dragging ? "var(--focus-color)" : null}></div>
+            <div class="slider-thumb" style:--value="{(value - min) / (max - min) * 100}%" style:background-color={dragging ? "var(--focus-color)" : null}></div>
         </div>
 
         <input type="number" bind:this={numberInput} bind:value={value} min={min} max={max} step={step} />
