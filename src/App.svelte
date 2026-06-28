@@ -91,7 +91,6 @@
         }
     });
 
-    let fileInputEl = $state(null);
 </script>
 
 <div id="previewspace">
@@ -109,8 +108,10 @@
         <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: center;">
             <img src={bannerImg} draggable="false" width={isPhotopea ? "250px" : "420px"} alt="Color Theater" /> <br />
             {#if !isPhotopea}
-                <button onclick={() => fileInputEl.click()}>Upload image</button>
-                <input type="file" accept="image/*" bind:this={fileInputEl} onchange={handleFileUpload} />
+                <label class="button" style:padding="4px 10px">
+                    Upload image
+                    <input type="file" accept="image/*" onchange={handleFileUpload} style:display="none" />
+                </label>
             {/if}
         </div>
     </div>
