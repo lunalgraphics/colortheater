@@ -24,22 +24,25 @@
 </script>
 
 <i>Vignette</i> <br />
-<div style:text-align="center" style:margin-bottom="10px">
-    <HueSatWheel bind:hue={hue} bind:saturation={saturation} bind:lightness={lightness} style="width: 120px" />
-    <Slider bind:value={lightness} min={0} max={100} direction="vertical" showNumberInput={false} --width="28px" --height="100px"
-        backgroundImage="linear-gradient(to bottom, hsl(0deg, 0%, 50%) 0%, hsl(0deg, 0%, 10%) 100%)" />
-</div>
-<div style:width="250px" style:max-width="100%" style:position="relative" style:left="50%" style:transform="translateX(-50%)">
-    <div style:display="grid" style:grid-template-columns="auto 1fr" style:row-gap="6px" style:column-gap="12px">
-        Size <Slider bind:value={gradeState.vignetteSize} min={0} max={100} --width="100%" />
-        Opacity <Slider bind:value={gradeState.vignetteOpacity} min={0} max={100} step={1} --width="100%" />
-        Blending <div style:text-align="right">
+<div style:display="grid" style:grid-template-columns="auto auto" style:column-gap="6px" style:align-items="center">
+    <div style:text-align="center">
+        <HueSatWheel bind:hue={hue} bind:saturation={saturation} bind:lightness={lightness} style="width: 110px" />
+        <Slider bind:value={lightness} min={0} max={100} direction="vertical" showNumberInput={false} --width="24px" --height="100px"
+            backgroundImage="linear-gradient(to bottom, hsl(0deg, 0%, 50%) 0%, hsl(0deg, 0%, 10%) 100%)" />
+    </div>
+    <div>
+            Size <br />
+            <Slider bind:value={gradeState.vignetteSize} min={0} max={100} --width="100%" /> <br />
+            Opacity <br />
+            <Slider bind:value={gradeState.vignetteOpacity} min={0} max={100} step={1} --width="100%" /> <br />
+            <label style:margin-top="6px" style:display="flex" style:align-items="center">
+                <span style:flex-grow="1">Blend</span>
                 <select bind:value={gradeState.vignetteBlending}>
-                <option value="multiply">Multiply</option>
-                <option value="overlay">Overlay</option>
-                <option value="soft-light">Soft Light</option>
-                <option value="screen">Screen</option>
-            </select>
-        </div>
+                    <option value="multiply">Multiply</option>
+                    <option value="overlay">Overlay</option>
+                    <option value="soft-light">Soft Light</option>
+                    <option value="screen">Screen</option>
+                </select>
+            </label>
     </div>
 </div>
