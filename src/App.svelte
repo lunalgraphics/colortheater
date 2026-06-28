@@ -2,6 +2,7 @@
     import newPreview from "./lib/scripts/canvStuff.js";
     import { builtInPresets, applyPreset, exportPreset, importPreset } from "./lib/scripts/builtInPresets.js";
     import { gradeState } from "./lib/state.svelte.js";
+    import { generateCubeLUT } from "./lib/scripts/generateCubeLUT.js";
 
     import { onMount, tick } from "svelte";
     import Photopea from "photopea";
@@ -111,7 +112,15 @@
         {/if}
     </div>
 
-    <button onclick={handleExport} style:margin="6px">Export LUT (.CUBE)</button>
+    <button onclick={() => {
+        const lut = generateCubeLUT(17, gradeState);
+        const blob = new Blob([lut], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "colortheater-lut.cube";
+        a.click();
+    }} style:margin="6px">Export LUT (.CUBE)</button>
 </div>
 
 {#if showWelcome}

@@ -3,11 +3,13 @@
  * Reads all parameters from the state object passed in — no DOM/SVG querying.
  *
  * @param {HTMLCanvasElement} canvas - Target canvas element
- * @param {HTMLImageElement} image - Source image element (must be loaded)
+ * @param {HTMLImageElement | HTMLCanvasElement} image - Source image or canvas (must be loaded if an image)
  * @param {object} state - The gradeState object from state.svelte.js
  */
 export default function newPreview(canvas, image, state) {
-    if (!image || !image.complete || !image.naturalWidth) return;
+    if (!image) return;
+    // If it's an HTMLImageElement, check that it's loaded
+    if (image instanceof HTMLImageElement && (!image.complete || !image.naturalWidth)) return;
 
     const w = state.imageWidth;
     const h = state.imageHeight;
