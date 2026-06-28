@@ -65,16 +65,17 @@
         reader.readAsDataURL(file);
     }
 
-    function handleExport() {
+    let imageExportType = $state("png");
+    function handleImageExport() {
         if (!canvasEl) return;
-        const outputURI = canvasEl.toDataURL();
+        const outputURI = canvasEl.toDataURL("image/" + imageExportType);
         if (isPhotopea) {
             const pea = new Photopea(window.parent);
             pea.openFromURL(outputURI);
         } else {
             const a = document.createElement("a");
             a.href = outputURI;
-            a.download = "colortheater-output.png";
+            a.download = "colortheater-output." + imageExportType;
             a.click();
         }
     }
@@ -100,7 +101,17 @@
 <ControlPanel />
 
 <div id="bottompanel">
-    <button onclick={handleExport}>{isPhotopea ? "Finish" : "Export as PNG"}</button>
+    <div style:display="inline-flex" style:margin="6px">
+        <button onclick={handleImageExport}>{isPhotopea ? "Finish" : "Export Image"}</button>
+        {#if !isPhotopea}
+            <select bind:value={imageExportType}>
+                <option value="png">PNG</option>
+                <option value="jpeg">JPEG</option>
+            </select>
+        {/if}
+    </div>
+
+    <button onclick={handleExport} style:margin="6px">Export LUT (.CUBE)</button>
 </div>
 
 {#if showWelcome}

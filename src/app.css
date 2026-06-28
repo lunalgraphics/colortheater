@@ -5,7 +5,7 @@ body {
 
 #previewspace {
     width: calc(100vw - 357px);
-    height: calc(100vh - 69px);
+    height: calc(100vh - 50px);
     box-sizing: border-box;
     padding: 15px;
     position: fixed;
@@ -45,8 +45,8 @@ body {
 
 #bottompanel {
     width: calc(100vw - 357px);
-    height: 69px;
-    line-height: 69px;
+    height: 50px;
+    line-height: 50px;
     box-sizing: border-box;
     position: fixed;
     left: 0;
@@ -112,7 +112,7 @@ button, .button {
     #controlpanel {
         top: 70vw;
         width: 100vw;
-        height: calc(100vh - 70vw - 69px);
+        height: calc(100vh - 70vw - 50px);
     }
     #bottompanel {
         width: 100vw;
