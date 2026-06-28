@@ -84,7 +84,7 @@ export default function newPreview(canvas, image, state) {
         const grad = vCtx.createRadialGradient(256, 256, 0, 256, 256, 256);
         // Inner stop: transparent from center outward based on size
         const innerOffset = (100 - state.vignetteSize) / 100;
-        grad.addColorStop(innerOffset, "transparent");
+        grad.addColorStop(innerOffset, state.vignetteColor + "00");
         grad.addColorStop(1, state.vignetteColor);
         vCtx.fillStyle = grad;
         vCtx.fillRect(0, 0, 512, 512);
