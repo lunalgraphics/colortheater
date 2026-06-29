@@ -1,10 +1,10 @@
 <script>
     import newPreview from "./lib/utils/canvStuff.js";
-    import { builtInPresets, applyPreset, exportPreset, importPreset } from "./lib/utils/builtInPresets.js";
     import { gradeState } from "./lib/state.svelte.js";
     import { generateCubeLUT } from "./lib/utils/generateCubeLUT.js";
+    import { initHistory, pushHistory, handleUndoRedoKeydown } from "./lib/history.svelte.js";
 
-    import { onMount, tick } from "svelte";
+    import { onMount } from "svelte";
     import Photopea from "photopea";
     import bannerImg from "./lib/assets/banner.png";
 
@@ -43,6 +43,7 @@
         void gradeState.imageHeight;
 
         renderPreview();
+        pushHistory();
     });
 
     function loadImage(src) {
@@ -88,6 +89,7 @@
     }
 
     onMount(() => {
+        initHistory();
         isPhotopea = new URLSearchParams(location.search).get("portal") === "photopea";
 
         if (isPhotopea) {
@@ -100,6 +102,8 @@
     });
 
 </script>
+
+<svelte:window onkeydown={handleUndoRedoKeydown} />
 
 <div id="previewspace">
     <canvas bind:this={canvasEl}></canvas>
