@@ -8,9 +8,9 @@ export const builtInPresets = [
         values: {
             brightness: 100, contrast: 100, saturation: 100, sepia: 0,
             colorMatrix: [[100,0,0,0,0],[0,100,0,0,0],[0,0,100,0,0],[0,0,0,100,0]],
-            tintColor: "#004080", tintAmount: 0,
-            highlightColor: "#ff5400", highlightAmount: 0,
-            shadowColor: "#0081ff", shadowAmount: 0,
+            tintColor: "#808080", tintAmount: 0,
+            highlightColor: "#808080", highlightAmount: 0,
+            shadowColor: "#808080", shadowAmount: 0,
             vignetteColor: "#000000", vignetteSize: 50, vignetteOpacity: 0, vignetteBlending: "multiply",
         },
     },
@@ -50,9 +50,9 @@ export const builtInPresets = [
     {
         name: "Parchment Dream",
         values: {
-            brightness: 96, contrast: 100, saturation: 80, sepia: 0,
+            brightness: 100, contrast: 100, saturation: 80, sepia: 0,
             colorMatrix: [[100,0,0,0,0],[0,100,0,0,0],[0,0,100,0,0],[0,0,0,100,0]],
-            tintColor: "#a07d40", tintAmount: 120,
+            tintColor: "#805100", tintAmount: 73,
             highlightColor: "#ff5400", highlightAmount: 20,
             shadowColor: "#0081ff", shadowAmount: 30,
             vignetteColor: "#000000", vignetteSize: 50, vignetteOpacity: 0, vignetteBlending: "multiply",
@@ -83,9 +83,9 @@ export const builtInPresets = [
     {
         name: "Integral Anomaly",
         values: {
-            brightness: 90, contrast: 100, saturation: 70, sepia: 0,
+            brightness: 95, contrast: 100, saturation: 70, sepia: 0,
             colorMatrix: [[100,0,0,0,0],[0,100,0,0,0],[0,0,100,0,0],[0,0,0,100,0]],
-            tintColor: "#338e4d", tintAmount: 30,
+            tintColor: "#008024", tintAmount: 19,
             highlightColor: "#b8d71d", highlightAmount: 30,
             shadowColor: "#35b69c", shadowAmount: 50,
             vignetteColor: "#000000", vignetteSize: 50, vignetteOpacity: 0, vignetteBlending: "multiply",
