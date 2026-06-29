@@ -1,5 +1,5 @@
 <script>
-    import { builtInPresets, applyPreset, exportPreset, importPreset } from "../../scripts/builtInPresets.js";
+    import { builtInPresets, applyPreset, exportPreset, importPreset } from "../../utils/builtInPresets.js";
     import { gradeState } from "../../state.svelte";
 
     function handlePresetChange(e) {

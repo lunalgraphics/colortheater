@@ -1,7 +1,7 @@
 <script>
     import { gradeState } from "../../state.svelte";
     import HueSatWheel from "../HueSatWheel.svelte";
-    import { Color } from "../../scripts/color.js";
+    import { Color } from "../../utils/color.js";
 
     let hue = $state(0);
 

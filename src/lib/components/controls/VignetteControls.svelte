@@ -2,7 +2,7 @@
     import { gradeState } from "../../state.svelte";
     import HueSatWheel from "../HueSatWheel.svelte";
     import Slider from "../Slider.svelte";
-    import { Color } from "../../scripts/color";
+    import { Color } from "../../utils/color";
 
     let hue = $state(0);
     let saturation = $state(0);

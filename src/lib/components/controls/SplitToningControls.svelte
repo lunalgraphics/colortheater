@@ -1,6 +1,6 @@
 <script>
     import { gradeState } from "../../state.svelte";
-    import { Color } from "../../scripts/color.js";
+    import { Color } from "../../utils/color.js";
 
     import HueSatWheel from "../HueSatWheel.svelte";
     import Slider from "../Slider.svelte";

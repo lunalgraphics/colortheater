@@ -1,8 +1,8 @@
 <script>
-    import newPreview from "./lib/scripts/canvStuff.js";
-    import { builtInPresets, applyPreset, exportPreset, importPreset } from "./lib/scripts/builtInPresets.js";
+    import newPreview from "./lib/utils/canvStuff.js";
+    import { builtInPresets, applyPreset, exportPreset, importPreset } from "./lib/utils/builtInPresets.js";
     import { gradeState } from "./lib/state.svelte.js";
-    import { generateCubeLUT } from "./lib/scripts/generateCubeLUT.js";
+    import { generateCubeLUT } from "./lib/utils/generateCubeLUT.js";
 
     import { onMount, tick } from "svelte";
     import Photopea from "photopea";
