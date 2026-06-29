@@ -160,9 +160,9 @@
 {#if showWelcome}
     <div id="welcomescreen">
         <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: center;">
-            <img src={bannerImg} draggable="false" width={isPhotopea ? "250px" : "420px"} alt="Color Theater" /> <br />
+            <img src={bannerImg} draggable="false" width="420" style:max-width="90vw" alt="Color Theater" /> <br />
             {#if !isPhotopea}
-                <label class="button" style:padding="4px 10px">
+                <label class="button" style:padding="6px 14px">
                     Upload image
                     <input type="file" accept="image/*" onchange={handleFileUpload} style:display="none" />
                 </label>
