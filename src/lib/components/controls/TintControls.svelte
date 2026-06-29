@@ -2,6 +2,7 @@
     import { gradeState } from "../../state.svelte";
     import HueSatWheel from "../HueSatWheel.svelte";
     import { Color } from "../../utils/color.js";
+    import { scrollwheelValue, dragwheelValue } from "../../svelte-attachments";
 
     let hue = $state(0);
 
@@ -18,4 +19,15 @@
 
 <i>Tint</i> <br />
 
-<HueSatWheel bind:hue={hue} bind:saturation={gradeState.tintAmount} />
+<div style:text-align="center">
+    <HueSatWheel bind:hue={hue} bind:saturation={gradeState.tintAmount} />
+    <br />
+    <label style:display="inline-block" style:margin="8px">
+        Hue
+        <input type="number" bind:value={hue} min={0} max={360} {@attach scrollwheelValue} {@attach dragwheelValue} />
+    </label>
+    <label style:display="inline-block" style:margin="8px">
+        Saturation
+        <input type="number" bind:value={gradeState.tintAmount} min={0} max={100} {@attach scrollwheelValue} {@attach dragwheelValue} />
+    </label>
+</div>
