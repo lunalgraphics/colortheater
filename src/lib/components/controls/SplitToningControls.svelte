@@ -49,12 +49,12 @@
         </tr>
         <tr>
             <td>
-                <div style:display="inline-block" style:width="120px">
+                <div style:display="inline-block" style:width="120px" style:max-width="90%">
                     <HueSatWheel bind:hue={highlightHue} bind:saturation={highlightSat} />
                 </div>
             </td>
             <td>
-                <div style:display="inline-block" style:width="120px">
+                <div style:display="inline-block" style:width="120px" style:max-width="90%">
                     <HueSatWheel bind:hue={shadowHue} bind:saturation={shadowSat} />
                 </div>
             </td>

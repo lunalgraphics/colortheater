@@ -7,11 +7,13 @@
     import VignetteControls from "./controls/VignetteControls.svelte";
 </script>
 
-<div id="controlpanel">
-    <PresetControls /> <hr />
-    <BasicControls /> <hr />
-    <MatrixControls /> <hr />
-    <TintControls /> <hr />
-    <SplitToningControls /> <hr />
-    <VignetteControls />
+<div id="controlpanel-wrapper">
+    <div id="controlpanel">
+        <PresetControls /> <hr />
+        <BasicControls /> <hr />
+        <MatrixControls /> <hr />
+        <TintControls /> <hr />
+        <SplitToningControls /> <hr />
+        <VignetteControls />
+    </div>
 </div>
