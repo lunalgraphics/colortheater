@@ -70,15 +70,21 @@
     function handleImageExport() {
         if (!canvasEl) return;
         const outputURI = canvasEl.toDataURL("image/" + imageExportType);
-        if (isPhotopea) {
-            const pea = new Photopea(window.parent);
-            pea.openFromURL(outputURI);
-        } else {
-            const a = document.createElement("a");
-            a.href = outputURI;
-            a.download = "colortheater-output." + imageExportType;
-            a.click();
-        }
+        const a = document.createElement("a");
+        a.href = outputURI;
+        a.download = "colortheater-output." + imageExportType;
+        a.click();
+    }
+
+    let lutGridSize = $state(33);
+    function handleLutExport() {
+        const lut = generateCubeLUT(17, gradeState);
+        const blob = new Blob([lut], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "colortheater-lut.cube";
+        a.click();
     }
 
     onMount(() => {
@@ -102,25 +108,49 @@
 <ControlPanel />
 
 <div id="bottompanel">
-    <div style:display="inline-flex" style:margin="6px">
-        <button onclick={handleImageExport}>{isPhotopea ? "Finish" : "Export Image"}</button>
-        {#if !isPhotopea}
+    {#if !isPhotopea}
+        <div style:display="inline-flex" style:margin="6px">
+            <button onclick={handleImageExport}>Export Image</button>
             <select bind:value={imageExportType}>
                 <option value="png">PNG</option>
                 <option value="jpeg">JPEG</option>
             </select>
-        {/if}
-    </div>
+        </div>
+        <div style:display="inline-flex" style:margin="6px">
+            <button onclick={handleLutExport}>Export LUT (.CUBE)</button>
+            <select bind:value={lutGridSize}>
+                <option value={17}>17 pt</option>
+                <option value={33}>33 pt</option>
+                <option value={65}>65 pt</option>
+            </select>
+        </div>
+    {:else if isPhotopea}
+        <button onclick={async () => {
+            const lut = generateCubeLUT(33, gradeState);
+            const encoder = new TextEncoder();
+            const cubeBuffer = encoder.encode(lut).buffer;
 
-    <button onclick={() => {
-        const lut = generateCubeLUT(17, gradeState);
-        const blob = new Blob([lut], { type: "text/plain" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "colortheater-lut.cube";
-        a.click();
-    }} style:margin="6px">Export LUT (.CUBE)</button>
+            const pea = new Photopea(window.parent);
+
+            // Create a Color Lookup adjustment layer via Action Manager script
+            await pea.runScript(`
+                var desc = new ActionDescriptor();
+                var ref = new ActionReference();
+                ref.putClass(stringIDToTypeID("adjustmentLayer"));
+                desc.putReference(charIDToTypeID("null"), ref);
+                var adjDesc = new ActionDescriptor();
+                adjDesc.putString(charIDToTypeID("Nm  "), "ColorTheater LUT");
+                var typeDesc = new ActionDescriptor();
+                adjDesc.putObject(charIDToTypeID("Type"), stringIDToTypeID("colorLookup"), typeDesc);
+                desc.putObject(charIDToTypeID("Usng"), stringIDToTypeID("adjustmentLayer"), adjDesc);
+                executeAction(charIDToTypeID("Mk  "), desc, DialogModes.NO);
+            `);
+
+            // Load the .cube file — Photopea will apply it to the active Color Lookup layer
+            await pea.loadAsset(cubeBuffer);
+
+        }}>Apply LUT</button>
+    {/if}
 </div>
 
 {#if showWelcome}
