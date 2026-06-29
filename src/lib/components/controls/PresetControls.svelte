@@ -46,4 +46,3 @@
     </select>
     <button onclick={handleExportPreset}>Export Preset</button>
 </div>
-<hr />

@@ -35,8 +35,10 @@ body {
 }
 
 #controlpanel i {
+    display: inline-block;
     color: #CDCDCD;
     font-size: 20px;
+    margin-bottom: 5px;
 }
 
 #controlpanel hr {

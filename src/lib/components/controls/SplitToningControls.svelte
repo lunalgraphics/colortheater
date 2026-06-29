@@ -67,8 +67,6 @@
     </tbody>
 </table>
 
-<hr />
-
 <style>
     table {
         width: 100%;

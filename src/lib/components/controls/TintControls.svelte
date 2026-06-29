@@ -19,6 +19,3 @@
 <i>Tint</i> <br />
 
 <HueSatWheel bind:hue={hue} bind:saturation={gradeState.tintAmount} />
-<br />
-
-<hr />

@@ -8,10 +8,10 @@
 </script>
 
 <div id="controlpanel">
-    <PresetControls />
-    <BasicControls />
-    <MatrixControls />
-    <TintControls />
-    <SplitToningControls />
+    <PresetControls /> <hr />
+    <BasicControls /> <hr />
+    <MatrixControls /> <hr />
+    <TintControls /> <hr />
+    <SplitToningControls /> <hr />
     <VignetteControls />
 </div>

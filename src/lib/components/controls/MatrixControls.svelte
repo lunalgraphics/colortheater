@@ -49,7 +49,6 @@
         {/each}
     </tbody>
 </table>
-<hr />
 
 <style>
     table {

@@ -10,7 +10,6 @@
     Saturation <Slider bind:value={gradeState.saturation} min={0} max={200} --width="100%" />
     Sepia <Slider bind:value={gradeState.sepia} min={0} max={100} --width="100%" />
 </div>
-<hr />
 
 <style>
     .gridbox {
