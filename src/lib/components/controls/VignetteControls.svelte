@@ -23,7 +23,7 @@
     });
 </script>
 
-<i>Vignette</i> <br />
+<i title="Soften the edges of the image">Vignette</i> <br />
 <div style:display="grid" style:grid-template-columns="auto auto" style:column-gap="6px" style:align-items="center">
     <div style:text-align="center">
         <HueSatWheel bind:hue={hue} bind:saturation={saturation} bind:lightness={lightness} style="width: 110px" />
@@ -31,12 +31,12 @@
             backgroundImage="linear-gradient(to bottom, hsl(0deg, 0%, 50%) 0%, hsl(0deg, 0%, 10%) 100%)" />
     </div>
     <div>
-            Size <br />
+            <span title="Size of vignette gradient">Size</span> <br />
             <Slider bind:value={gradeState.vignetteSize} min={0} max={100} --width="100%" /> <br />
-            Opacity <br />
+            <span title="Strength of vignette effect">Opacity</span> <br />
             <Slider bind:value={gradeState.vignetteOpacity} min={0} max={100} step={1} --width="100%" /> <br />
             <label style:margin-top="6px" style:display="flex" style:align-items="center">
-                <span style:flex-grow="1">Blend</span>
+                <span style:flex-grow="1" title="Blend mode">Blend</span>
                 <select bind:value={gradeState.vignetteBlending}>
                     <option value="multiply">Multiply</option>
                     <option value="overlay">Overlay</option>

@@ -12,7 +12,7 @@
     }
 </script>
 
-<i>Color Matrix</i> <br />
+<i title="Adjust color channels individually">Color Matrix</i> <br />
 <table style="width: 100%;" id="cmatrixTable">
     <tbody>
         <tr>
@@ -54,6 +54,7 @@
     table {
         border-collapse: collapse;
         border-spacing: 0;
+        margin-bottom: 14px;
     }
 
     table td {

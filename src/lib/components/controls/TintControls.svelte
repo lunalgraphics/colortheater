@@ -17,16 +17,16 @@
     });
 </script>
 
-<i>Tint</i> <br />
+<i title="Add a colored tint">Tint</i> <br />
 
 <div style:text-align="center">
     <HueSatWheel bind:hue={hue} bind:saturation={gradeState.tintAmount} />
     <br />
-    <label style:display="inline-block" style:margin="8px">
+    <label style:display="inline-block" style:margin="8px" title="Tint hue">
         Hue
         <input type="number" value={Math.round(hue)} oninput={(e) => { hue = parseFloat(e.target?.value); }} min={0} max={360} {@attach scrollwheelValue} {@attach dragwheelValue} />
     </label>
-    <label style:display="inline-block" style:margin="8px">
+    <label style:display="inline-block" style:margin="8px" title="Tint strength">
         Sat
         <input type="number" value={Math.round(gradeState.tintAmount)} oninput={(e) => { gradeState.tintAmount = parseFloat(e.target?.value); }} min={0} max={100} {@attach scrollwheelValue} {@attach dragwheelValue} />
     </label>

@@ -34,16 +34,19 @@
     });
 </script>
 
-<i>Color Dodge/Burn</i> <br />
+<i title="Add separate color tones to the highlights and shadows">Color Dodge/Burn</i> <br />
 
-<table>
+<table style:padding-bottom="6px">
     <thead>
         <tr>
-            <th>Highlights</th>
-            <th>Shadows</th>
+            <th title="Brightest areas">Highlights</th>
+            <th title="Darkest areas">Shadows</th>
         </tr>
     </thead>
     <tbody>
+        <tr style:font-size="small">
+            <td colspan="2" title="Color tone">Color</td>
+        </tr>
         <tr>
             <td>
                 <div style:display="inline-block" style:width="120px">
@@ -56,12 +59,15 @@
                 </div>
             </td>
         </tr>
+        <tr style:font-size="small">
+            <td colspan="2" title="How much to apply the toning">Amount</td>
+        </tr>
         <tr>
             <td>
-                <Slider min={0} max={100} bind:value={gradeState.highlightAmount} --width="100%" />
+                <Slider min={0} max={100} bind:value={gradeState.highlightAmount} --width="90%" />
             </td>
             <td>
-                <Slider min={0} max={100} bind:value={gradeState.shadowAmount} --width="100%" />
+                <Slider min={0} max={100} bind:value={gradeState.shadowAmount} --width="90%" />
             </td>
         </tr>
     </tbody>
@@ -71,7 +77,6 @@
     table {
         width: 100%;
         table-layout: fixed;
-        border-spacing: 10px;
     }
 
     th {
