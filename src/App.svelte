@@ -1,6 +1,6 @@
 <script>
     import newPreview from "./lib/utils/canvStuff.js";
-    import { gradeState } from "./lib/state.svelte.js";
+    import { gradeState, previewRefs } from "./lib/state.svelte.js";
     import { generateCubeLUT } from "./lib/utils/generateCubeLUT.js";
     import { initHistory, pushHistory, handleUndoRedoKeydown } from "./lib/history.svelte.js";
 
@@ -51,6 +51,7 @@
         img.crossOrigin = "anonymous";
         img.onload = () => {
             imageEl = img;
+            previewRefs.image = img;
             gradeState.imageWidth = img.naturalWidth;
             gradeState.imageHeight = img.naturalHeight;
             showWelcome = false;
@@ -89,6 +90,7 @@
     }
 
     onMount(() => {
+        previewRefs.canvas = canvasEl;
         initHistory();
         isPhotopea = new URLSearchParams(location.search).get("portal") === "photopea";
 

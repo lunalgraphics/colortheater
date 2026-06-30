@@ -72,3 +72,14 @@ export function resetState() {
     gradeState.vignetteOpacity = 0;
     gradeState.vignetteBlending = "multiply";
 }
+
+/**
+ * Shared references to the canvas and image elements for preview rendering.
+ * Set by App.svelte, consumed by components that need to render previews (e.g. preset hover).
+ */
+export const previewRefs = {
+    /** @type {HTMLCanvasElement | null} */
+    canvas: null,
+    /** @type {HTMLImageElement | null} */
+    image: null,
+};

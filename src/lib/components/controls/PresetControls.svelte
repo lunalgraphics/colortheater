@@ -1,27 +1,46 @@
 <script>
     import { builtInPresets, applyPreset, exportPreset, importPreset } from "../../utils/builtInPresets.js";
-    import { gradeState } from "../../state.svelte";
+    import { gradeState, previewRefs } from "../../state.svelte";
+    import newPreview from "../../utils/canvStuff.js";
 
-    function handlePresetChange(e) {
-        const val = e.target.value;
-        if (val === "import_preset") {
-            const fileInput = document.createElement("input");
-            fileInput.type = "file";
-            fileInput.accept = ".ctxml,.json";
-            fileInput.onchange = (e2) => {
-                const file = e2.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onloadend = (e3) => importPreset(e3.target.result, gradeState);
-                reader.readAsText(file);
-            };
-            fileInput.click();
-        } else if (val !== "nothing") {
-            // Find the preset by name
-            const preset = builtInPresets.find(p => p.name === val);
-            if (preset) applyPreset(gradeState, preset);
+    let open = $state(false);
+
+    /** Whether we're currently showing a hover preview (to know when to restore) */
+    let previewing = $state(false);
+
+    function toggleDropdown() {
+        open = !open;
+    }
+
+    function closeDropdown() {
+        open = false;
+    }
+
+    function handleClickOutside(e) {
+        if (open && !e.target.closest(".preset-picker")) {
+            closeDropdown();
         }
-        e.target.value = "nothing";
+    }
+
+    function selectPreset(preset) {
+        previewing = false;
+        applyPreset(gradeState, preset);
+        closeDropdown();
+    }
+
+    function handleImport() {
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.accept = ".ctxml,.json";
+        fileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onloadend = (e2) => importPreset(e2.target.result, gradeState);
+            reader.readAsText(file);
+        };
+        fileInput.click();
+        closeDropdown();
     }
 
     function handleExportPreset() {
@@ -32,17 +51,119 @@
         a.download = "preset.ctpreset.json";
         a.click();
     }
+
+    /**
+     * Build a temporary state-like object for hover preview rendering.
+     * Merges preset values with current image dimensions.
+     */
+    function buildPreviewState(preset) {
+        return {
+            ...preset.values,
+            imageWidth: gradeState.imageWidth,
+            imageHeight: gradeState.imageHeight,
+        };
+    }
+
+    function handlePresetHover(preset) {
+        previewing = true;
+        const { canvas, image } = previewRefs;
+        if (!canvas || !image) return;
+        newPreview(canvas, image, buildPreviewState(preset));
+    }
+
+    function handlePresetLeave() {
+        if (!previewing) return;
+        previewing = false;
+        const { canvas, image } = previewRefs;
+        if (!canvas || !image) return;
+        // Restore the actual current state
+        newPreview(canvas, image, gradeState);
+    }
 </script>
 
-<div style="text-align: center;">
-    <select onchange={handlePresetChange}>
-        <option disabled selected hidden value="nothing">Use a Preset</option>
-        <option value="import_preset">Import Preset File</option>
-        <optgroup label="Built-in Presets">
-            {#each builtInPresets as preset}
-                <option value={preset.name}>{preset.name}</option>
-            {/each}
-        </optgroup>
-    </select>
+<svelte:window onclick={handleClickOutside} />
+
+<div style="text-align: center;" class="preset-picker">
+    <button onclick={toggleDropdown}>Use a Preset</button>
     <button onclick={handleExportPreset}>Export Preset</button>
+
+    {#if open}
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
+        <div class="dropdown" onmouseleave={handlePresetLeave}>
+            <button class="dropdown-item import-btn" onclick={handleImport}>
+                Import Preset File...
+            </button>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-label">Built-in Presets</div>
+            {#each builtInPresets as preset}
+                <button
+                    class="dropdown-item"
+                    onclick={() => selectPreset(preset)}
+                    onmouseenter={() => handlePresetHover(preset)}
+                    onmouseleave={handlePresetLeave}
+                >
+                    {preset.name}
+                </button>
+            {/each}
+        </div>
+    {/if}
 </div>
+
+<style>
+    .preset-picker {
+        position: relative;
+    }
+
+    .dropdown {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 20;
+        background: #2a2a2a;
+        border: 1px solid #555;
+        border-radius: 4px;
+        margin-top: 4px;
+        min-width: 180px;
+        max-height: 300px;
+        overflow-y: auto;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+
+    .dropdown-item {
+        display: block;
+        width: 100%;
+        padding: 6px 12px;
+        text-align: left;
+        border: none;
+        background: none;
+        color: #bbb;
+        font-size: 13px;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+    .dropdown-item:hover {
+        background: #444;
+        color: white;
+        border: none;
+    }
+
+    .dropdown-divider {
+        height: 1px;
+        background: #444;
+        margin: 4px 0;
+    }
+
+    .dropdown-label {
+        padding: 4px 12px;
+        font-size: 11px;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .import-btn {
+        color: #9cb8d8;
+    }
+</style>
