@@ -1,4 +1,6 @@
 <script>
+    import { scrollwheelValue } from "../svelte-attachments";
+
     let {
         min = 0,
         max = 100,
@@ -53,7 +55,7 @@
         </div>
 
         {#if showNumberInput}
-            <input type="number" class="slider-number-input" bind:value={value} min={min} max={max} step={step} />
+            <input type="number" class="slider-number-input" bind:value={value} min={min} max={max} step={step} {@attach scrollwheelValue} />
         {/if}
     </div>
 </div>
