@@ -139,7 +139,7 @@
             const pea = new Photopea(window.parent);
 
             // Create a Color Lookup adjustment layer via Action Manager script
-            await pea.runScript(`
+            /*await pea.runScript(`
                 var desc = new ActionDescriptor();
                 var ref = new ActionReference();
                 ref.putClass(stringIDToTypeID("adjustmentLayer"));
@@ -153,9 +153,10 @@
             `);
 
             // Load the .cube file — Photopea will apply it to the active Color Lookup layer
-            await pea.loadAsset(cubeBuffer);
-
-        }}>Apply LUT</button>
+            await pea.loadAsset(cubeBuffer);*/
+            const imageUrl = canvasEl.toDataURL("image/png");
+            await pea.openFromURL(imageUrl, true);
+        }}>Finish</button>
     {/if}
 </div>
 
