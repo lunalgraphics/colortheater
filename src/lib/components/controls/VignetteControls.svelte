@@ -24,25 +24,23 @@
 </script>
 
 <i title="Soften the edges of the image">Vignette</i> <br />
-<div style:display="grid" style:grid-template-columns="auto auto" style:column-gap="6px" style:align-items="center">
-    <div style:text-align="center">
-        <HueSatWheel bind:hue={hue} bind:saturation={saturation} bind:lightness={lightness} style="width: 110px" />
-        <Slider bind:value={lightness} min={0} max={100} direction="vertical" showNumberInput={false} --width="24px" --height="100px"
-            backgroundImage="linear-gradient(to bottom, hsl(0deg, 0%, 50%) 0%, hsl(0deg, 0%, 10%) 100%)" />
-    </div>
-    <div>
-            <span title="Size of vignette gradient">Size</span> <br />
-            <Slider bind:value={gradeState.vignetteSize} min={0} max={100} --width="100%" /> <br />
-            <span title="Strength of vignette effect">Opacity</span> <br />
-            <Slider bind:value={gradeState.vignetteOpacity} min={0} max={100} step={1} --width="100%" /> <br />
-            <label style:margin-top="6px" style:display="flex" style:align-items="center">
-                <span style:flex-grow="1" title="Blend mode">Blend</span>
-                <select bind:value={gradeState.vignetteBlending}>
-                    <option value="multiply">Multiply</option>
-                    <option value="overlay">Overlay</option>
-                    <option value="soft-light">Soft Light</option>
-                    <option value="screen">Screen</option>
-                </select>
-            </label>
+<div style:display="flex" style:flex-direction="row" style:align-items="center" style:justify-content="center">
+    <HueSatWheel bind:hue={hue} bind:saturation={saturation} bind:lightness={lightness} style="width: 110px" />
+    <Slider bind:value={lightness} min={0} max={100} direction="vertical" showNumberInput={false} --width="24px" --height="100px"
+        backgroundImage="linear-gradient(to bottom, hsl(0deg, 0%, 50%) 0%, hsl(0deg, 0%, 10%) 100%)" />
+</div>
+<div style:display="grid" style:grid-template-columns="auto 1fr" style:column-gap="16px" style:row-gap="4px">
+    <span title="Size of vignette gradient">Size</span>
+    <Slider bind:value={gradeState.vignetteSize} min={0} max={100} --width="100%" />
+    <span title="Strength of vignette effect">Opacity</span>
+    <Slider bind:value={gradeState.vignetteOpacity} min={0} max={100} step={1} --width="100%" />
+    <span title="Blend mode">Blend Mode</span>
+    <div style:text-align="right">
+        <select bind:value={gradeState.vignetteBlending} style:width="min-content">
+            <option value="multiply">Multiply</option>
+            <option value="overlay">Overlay</option>
+            <option value="soft-light">Soft Light</option>
+            <option value="screen">Screen</option>
+        </select>
     </div>
 </div>
