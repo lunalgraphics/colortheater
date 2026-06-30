@@ -61,11 +61,11 @@ export function resetState() {
         [0, 0, 100, 0, 0],
         [0, 0, 0, 100, 0],
     ];
-    gradeState.tintColor = "#004080";
+    gradeState.tintColor = "#808080";
     gradeState.tintAmount = 0;
-    gradeState.highlightColor = "#ff5400";
+    gradeState.highlightColor = "#808080";
     gradeState.highlightAmount = 0;
-    gradeState.shadowColor = "#0081ff";
+    gradeState.shadowColor = "#808080";
     gradeState.shadowAmount = 0;
     gradeState.vignetteColor = "#000000";
     gradeState.vignetteSize = 50;
