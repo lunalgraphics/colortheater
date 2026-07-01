@@ -124,6 +124,17 @@ export const builtInPresets = [
             vignetteColor: "#000000", vignetteSize: 50, vignetteOpacity: 50, vignetteBlending: "overlay",
         },
     },
+    {
+        name: "Rockport",
+        values: {
+            brightness: 104, contrast: 100, saturation: 67, sepia: 15,
+            colorMatrix: [[100,0,0,0,0],[0,100,0,0,0],[0,0,100,0,0],[0,0,0,100,0]],
+            tintColor: "#805000", tintAmount: 61,
+            highlightColor: "#d98e26", highlightAmount: 26,
+            shadowColor: "#2579da", shadowAmount: 43,
+            vignetteColor: "#000000", vignetteSize: 69, vignetteOpacity: 19, vignetteBlending: "multiply"
+            }
+    }
 ];
 
 /**
