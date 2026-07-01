@@ -80,7 +80,7 @@
 
     let lutGridSize = $state(33);
     function handleLutExport() {
-        const lut = generateCubeLUT(17, gradeState);
+        const lut = generateCubeLUT(lutGridSize, gradeState);
         const blob = new Blob([lut], { type: "text/plain" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -132,30 +132,28 @@
         </div>
     {:else if isPhotopea}
         <button onclick={async () => {
-            const lut = generateCubeLUT(33, gradeState);
+            const lut = generateCubeLUT(17, gradeState);
             const encoder = new TextEncoder();
             const cubeBuffer = encoder.encode(lut).buffer;
 
             const pea = new Photopea(window.parent);
+            
+            // Load the .cube file — Photopea will apply it to the active Color Lookup layer
+            await pea.loadAsset(cubeBuffer);
 
             // Create a Color Lookup adjustment layer via Action Manager script
-            /*await pea.runScript(`
+            await pea.runScript(`
                 var desc = new ActionDescriptor();
                 var ref = new ActionReference();
                 ref.putClass(stringIDToTypeID("adjustmentLayer"));
                 desc.putReference(charIDToTypeID("null"), ref);
                 var adjDesc = new ActionDescriptor();
-                adjDesc.putString(charIDToTypeID("Nm  "), "ColorTheater LUT");
+                adjDesc.putString(charIDToTypeID("Nm  "), "file");
                 var typeDesc = new ActionDescriptor();
                 adjDesc.putObject(charIDToTypeID("Type"), stringIDToTypeID("colorLookup"), typeDesc);
                 desc.putObject(charIDToTypeID("Usng"), stringIDToTypeID("adjustmentLayer"), adjDesc);
                 executeAction(charIDToTypeID("Mk  "), desc, DialogModes.NO);
             `);
-
-            // Load the .cube file — Photopea will apply it to the active Color Lookup layer
-            await pea.loadAsset(cubeBuffer);*/
-            const imageUrl = canvasEl.toDataURL("image/png");
-            await pea.openFromURL(imageUrl, true);
         }}>Finish</button>
     {/if}
 </div>
