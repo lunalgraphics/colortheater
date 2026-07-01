@@ -1,0 +1,48 @@
+{
+    "name": "lunalgraphics-colortheater",
+    "productName": "Color Theater",
+    "description": "Color grading studio",
+    "author": {
+        "name": "Lunal Graphics",
+        "url": "https://lunalgraphics.com",
+        "email": "lunalgraphics@lunalgraphics.com"
+    },
+    "homepage": "https://lunalgraphics.com/about-colortheater",
+    "version": "3.0.0",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "build:linux": "electron-builder --linux",
+        "build:darwin": "electron-builder --mac",
+        "build:win32": "electron-builder --windows",
+        "build": "electron-builder --mac --linux --windows"
+    },
+    "devDependencies": {
+        "electron": "37.1.0",
+        "electron-builder": "^26.8.1"
+    },
+    "files": [
+        "main.js",
+        "app/**/*"
+    ],
+    "build": {
+        "appId": "com.electron.lunalgraphics-colortheater",
+        "directories": {
+            "buildResources": "resources"
+        },
+        "files": [
+            "main.js",
+            "app/**/*"
+        ],
+        "win": {
+            "target": "portable",
+            "signAndEditExecutable": false
+        },
+        "mac": {
+            "target": "zip"
+        },
+        "linux": {
+            "target": "deb"
+        }
+    }
+}
