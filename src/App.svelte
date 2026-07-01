@@ -3,7 +3,8 @@
     import { gradeState, previewRefs } from "./lib/state.svelte.js";
     import { generateCubeLUT } from "./lib/utils/generateCubeLUT.js";
     import { initHistory, pushHistory, handleUndoRedoKeydown } from "./lib/history.svelte.js";
-
+    import convertCubeToICC from "./lib/utils/convertCubeToICC.js";
+    import { generateIccLUT } from "./lib/utils/generateIccLUT.js";
     import { onMount } from "svelte";
     import Photopea from "photopea";
     import bannerImg from "./lib/assets/banner.png";
@@ -132,14 +133,14 @@
         </div>
     {:else if isPhotopea}
         <button onclick={async () => {
-            const lut = generateCubeLUT(33, gradeState);
-            const encoder = new TextEncoder();
-            const cubeBuffer = encoder.encode(lut).buffer;
+            const lut = generateIccLUT(10, gradeState);
+            console.log(JSON.stringify(Array.from(lut)));
+            window.lut = lut;
 
             const pea = new Photopea(window.parent);
 
             // Create a Color Lookup adjustment layer via Action Manager script
-            /*await pea.runScript(`
+            await pea.runScript(`
                 var desc = new ActionDescriptor();
                 var ref = new ActionReference();
                 ref.putClass(stringIDToTypeID("adjustmentLayer"));
@@ -150,12 +151,28 @@
                 adjDesc.putObject(charIDToTypeID("Type"), stringIDToTypeID("colorLookup"), typeDesc);
                 desc.putObject(charIDToTypeID("Usng"), stringIDToTypeID("adjustmentLayer"), adjDesc);
                 executeAction(charIDToTypeID("Mk  "), desc, DialogModes.NO);
-            `);
-
-            // Load the .cube file — Photopea will apply it to the active Color Lookup layer
-            await pea.loadAsset(cubeBuffer);*/
-            const imageUrl = canvasEl.toDataURL("image/png");
-            await pea.openFromURL(imageUrl, true);
+                
+                var idset = stringIDToTypeID("set");
+                var desc = new ActionDescriptor();
+                
+                var idtarget = stringIDToTypeID("null");
+                var ref = new ActionReference();
+                ref.putClass(stringIDToTypeID("colorLookup"));
+                desc.putReference(idtarget, ref);
+                
+                var idto = stringIDToTypeID("to");
+                var lookupDesc = new ActionDescriptor();
+                
+                var idlookupType = stringIDToTypeID("lookupType");
+                var idcolorLookupType = stringIDToTypeID("colorLookupType");
+                var id3DLUT = stringIDToTypeID("3DLUT");
+                lookupDesc.putEnumerated(idlookupType, idcolorLookupType, id3DLUT);
+                
+                var idprofiletdta = stringIDToTypeID("profiletdta");
+                lookupDesc.putData(idprofiletdta, String.fromCharCode(${Array.from(lut).join(",")}));
+                
+                desc.putObject(idto, stringIDToTypeID("colorLookup"), lookupDesc);
+                executeAction(idset, desc, DialogModes.NO);`);
         }}>Finish</button>
     {/if}
 </div>
