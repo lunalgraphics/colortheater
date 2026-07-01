@@ -132,9 +132,20 @@ export const builtInPresets = [
             tintColor: "#805000", tintAmount: 61,
             highlightColor: "#d98e26", highlightAmount: 26,
             shadowColor: "#2579da", shadowAmount: 43,
-            vignetteColor: "#000000", vignetteSize: 69, vignetteOpacity: 19, vignetteBlending: "multiply"
-            }
-    }
+            vignetteColor: "#000000", vignetteSize: 69, vignetteOpacity: 19, vignetteBlending: "multiply",
+        },
+    },
+    {
+        name: "Monet",
+        values: {
+            brightness: 93, contrast: 70, saturation: 114, sepia: 0,
+            colorMatrix: [[100,0,0,0,0],[0,95,0,0,0],[0,10,111,0,0],[0,0,0,100,0]],
+            tintColor: "#007680", tintAmount: 36,
+            highlightColor: "#9bc23d", highlightAmount: 40,
+            shadowColor: "#194ce6", shadowAmount: 61,
+            vignetteColor: "#000000", vignetteSize: 50, vignetteOpacity: 0, vignetteBlending: "soft-light",
+        },
+    },
 ];
 
 /**
