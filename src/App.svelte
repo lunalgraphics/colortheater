@@ -1,7 +1,6 @@
 <script>
     import newPreview from "./lib/utils/canvStuff.js";
     import { gradeState, previewRefs } from "./lib/state.svelte.js";
-    import { generateCubeLUT } from "./lib/utils/generateCubeLUT.js";
     import { initHistory, pushHistory, handleUndoRedoKeydown } from "./lib/history.svelte.js";
 
     import { onMount } from "svelte";
@@ -9,6 +8,7 @@
     import bannerImg from "./lib/assets/banner.png";
 
     import ControlPanel from "./lib/components/ControlPanel.svelte";
+    import { generateCubeLUT, generateIccLUT } from "./lib/utils/LutUtils.js";
 
     let canvasEl;
     let imageEl;
@@ -132,17 +132,12 @@
         </div>
     {:else if isPhotopea}
         <button onclick={async () => {
-            const lut = generateCubeLUT(17, gradeState);
-            const encoder = new TextEncoder();
-            const cubeBuffer = encoder.encode(lut).buffer;
+            const lut = generateIccLUT(9, gradeState);
+            const iccBinString = Array.from(lut).join(",");
 
             const pea = new Photopea(window.parent);
-            
-            // Load the .cube file — Photopea will apply it to the active Color Lookup layer
-            await pea.loadAsset(cubeBuffer);
 
-            // Create a Color Lookup adjustment layer via Action Manager script
-            await pea.runScript(`
+            const cLookupScript = `
                 var desc = new ActionDescriptor();
                 var ref = new ActionReference();
                 ref.putClass(stringIDToTypeID("adjustmentLayer"));
@@ -153,7 +148,20 @@
                 adjDesc.putObject(charIDToTypeID("Type"), stringIDToTypeID("colorLookup"), typeDesc);
                 desc.putObject(charIDToTypeID("Usng"), stringIDToTypeID("adjustmentLayer"), adjDesc);
                 executeAction(charIDToTypeID("Mk  "), desc, DialogModes.NO);
-            `);
+
+                var idsetd = charIDToTypeID("setd");
+                var mainDesc = new ActionDescriptor();
+                var ref = new ActionReference();
+                ref.putEnumerated(charIDToTypeID("AdjL"), charIDToTypeID("Ordn"), charIDToTypeID("Trgt"));
+                mainDesc.putReference(charIDToTypeID("null"), ref);
+                var lutDesc = new ActionDescriptor();
+                lutDesc.putEnumerated(stringIDToTypeID("lookupType"), stringIDToTypeID("colorLookupType"), stringIDToTypeID("3DLUT"));
+                lutDesc.putString(charIDToTypeID("Nm  "), "ColorTheaterLUT.icc");
+                lutDesc.putData(stringIDToTypeID("profile"), String.fromCharCode(${iccBinString}) );
+                mainDesc.putObject(charIDToTypeID("T   "), stringIDToTypeID("colorLookup"), lutDesc);
+                executeAction(idsetd, mainDesc, DialogModes.NO);
+            `;
+            await pea.runScript(cLookupScript);
         }}>Finish</button>
     {/if}
 </div>
