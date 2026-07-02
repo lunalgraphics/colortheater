@@ -1,5 +1,70 @@
 import renderEngine from "../renderEngine";
 
+// WebGL textures are capped at gl.MAX_TEXTURE_SIZE (guaranteed ≥2048, typically 4096–16384).
+// A 33³=35937 or 65³=274625 wide strip will exceed this on most hardware and silently produce
+// wrong output. We tile the strip into rows of at most TILE_WIDTH pixels instead.
+const TILE_WIDTH = 4096;
+
+/**
+ * Runs renderEngine over a flat array of identity LUT colors, tiling the input
+ * into rows of at most TILE_WIDTH pixels to stay within WebGL texture limits.
+ *
+ * @param {number} gridSize
+ * @param {object} lutState - pre-cloned state with vignette disabled
+ * @returns {Uint8ClampedArray} flat RGBA pixel data, length = totalEntries * 4
+ */
+function renderLutStrip(gridSize, lutState) {
+    const totalEntries = gridSize * gridSize * gridSize;
+
+    // Build the full flat identity RGBA buffer
+    const identityRGBA = new Uint8ClampedArray(totalEntries * 4);
+    for (let idx = 0; idx < totalEntries; idx++) {
+        const sliceSize = gridSize * gridSize;
+        const b = Math.floor(idx / sliceSize);
+        const g = Math.floor((idx % sliceSize) / gridSize);
+        const r = idx % gridSize;
+        const off = idx * 4;
+        identityRGBA[off]     = Math.round((r / (gridSize - 1)) * 255);
+        identityRGBA[off + 1] = Math.round((g / (gridSize - 1)) * 255);
+        identityRGBA[off + 2] = Math.round((b / (gridSize - 1)) * 255);
+        identityRGBA[off + 3] = 255;
+    }
+
+    const outputRGBA = new Uint8ClampedArray(totalEntries * 4);
+
+    // Process in tiles to avoid exceeding WebGL MAX_TEXTURE_SIZE
+    let processed = 0;
+    while (processed < totalEntries) {
+        const tileEntries = Math.min(TILE_WIDTH, totalEntries - processed);
+
+        // Build tile input canvas
+        const inputCanvas = document.createElement("canvas");
+        inputCanvas.width = tileEntries;
+        inputCanvas.height = 1;
+        const inputCtx = inputCanvas.getContext("2d");
+        const tileData = new ImageData(
+            identityRGBA.slice(processed * 4, (processed + tileEntries) * 4),
+            tileEntries,
+            1
+        );
+        inputCtx.putImageData(tileData, 0, 0);
+
+        // Grade the tile
+        const tileState = { ...lutState, imageWidth: tileEntries, imageHeight: 1 };
+        const outputCanvas = document.createElement("canvas");
+        renderEngine(outputCanvas, inputCanvas, tileState);
+
+        // Read back
+        const outputCtx = outputCanvas.getContext("2d");
+        const tileOutput = outputCtx.getImageData(0, 0, tileEntries, 1).data;
+        outputRGBA.set(tileOutput, processed * 4);
+
+        processed += tileEntries;
+    }
+
+    return outputRGBA;
+}
+
 /**
  * Generates a .cube LUT file string by running renderEngine on a synthetic
  * identity-color strip and reading back the graded output.
@@ -11,50 +76,13 @@ import renderEngine from "../renderEngine";
 export function generateCubeLUT(gridSize, state) {
     const totalEntries = gridSize * gridSize * gridSize;
 
-    // 1. Clone the state and disable vignette so it doesn't affect color mapping
+    // Clone the state and disable vignette so it doesn't affect color mapping
     const lutState = { ...state };
     lutState.vignetteOpacity = 0;
-    // Override image dimensions to match our 1-pixel-tall strip
-    lutState.imageWidth = totalEntries;
-    lutState.imageHeight = 1;
 
-    // 2. Create a tiny canvas (width = totalEntries, height = 1) filled with
-    //    the identity input colors for the LUT grid.
-    //    Ordering: Red fastest, Green medium, Blue slowest (standard .cube order).
-    const inputCanvas = document.createElement("canvas");
-    inputCanvas.width = totalEntries;
-    inputCanvas.height = 1;
-    const inputCtx = inputCanvas.getContext("2d");
-    const inputData = inputCtx.createImageData(totalEntries, 1);
+    const outputData = renderLutStrip(gridSize, lutState);
 
-    for (let idx = 0; idx < totalEntries; idx++) {
-        const sliceSize = gridSize * gridSize;
-        const b = Math.floor(idx / sliceSize);
-        const g = Math.floor((idx % sliceSize) / gridSize);
-        const r = idx % gridSize;
-
-        // Normalize to 0–255 for canvas pixel data
-        const rByte = Math.round((r / (gridSize - 1)) * 255);
-        const gByte = Math.round((g / (gridSize - 1)) * 255);
-        const bByte = Math.round((b / (gridSize - 1)) * 255);
-
-        const offset = idx * 4;
-        inputData.data[offset] = rByte;
-        inputData.data[offset + 1] = gByte;
-        inputData.data[offset + 2] = bByte;
-        inputData.data[offset + 3] = 255;
-    }
-    inputCtx.putImageData(inputData, 0, 0);
-
-    // 3. Apply renderEngine to the input canvas to produce graded output
-    const outputCanvas = document.createElement("canvas");
-    renderEngine(outputCanvas, inputCanvas, lutState);
-
-    // 4. Read back the graded pixels
-    const outputCtx = outputCanvas.getContext("2d");
-    const outputData = outputCtx.getImageData(0, 0, totalEntries, 1).data;
-
-    // 5. Build the .cube file string
+    // Build the .cube file string
     const lines = [];
     lines.push(`TITLE "ColorTheater LUT"`);
     lines.push(`LUT_3D_SIZE ${gridSize}`);
@@ -62,7 +90,7 @@ export function generateCubeLUT(gridSize, state) {
 
     for (let idx = 0; idx < totalEntries; idx++) {
         const offset = idx * 4;
-        const rOut = (outputData[offset] / 255).toFixed(6);
+        const rOut = (outputData[offset]     / 255).toFixed(6);
         const gOut = (outputData[offset + 1] / 255).toFixed(6);
         const bOut = (outputData[offset + 2] / 255).toFixed(6);
         lines.push(`${rOut} ${gOut} ${bOut}`);
@@ -257,49 +285,20 @@ function buildLut16Tag(N, outputData) {
  */
 export function generateIccLUT(gridSize, state) {
     const N = gridSize;
-    const totalEntries = N * N * N;
 
     // 1. Clone state and disable vignette
     const lutState = { ...state };
     lutState.vignetteOpacity = 0;
-    lutState.imageWidth = totalEntries;
-    lutState.imageHeight = 1;
 
-    // 2. Build identity-color strip canvas (B slowest, G medium, R fastest — .cube order)
-    const inputCanvas = document.createElement("canvas");
-    inputCanvas.width = totalEntries;
-    inputCanvas.height = 1;
-    const inputCtx = inputCanvas.getContext("2d");
-    const inputData = inputCtx.createImageData(totalEntries, 1);
+    // 2. Grade the identity strip (tiled to avoid WebGL texture size limits)
+    const outputData = renderLutStrip(N, lutState);
 
-    for (let idx = 0; idx < totalEntries; idx++) {
-        const sliceSize = N * N;
-        const b = Math.floor(idx / sliceSize);
-        const g = Math.floor((idx % sliceSize) / N);
-        const r = idx % N;
-
-        const offset = idx * 4;
-        inputData.data[offset]     = Math.round((r / (N - 1)) * 255);
-        inputData.data[offset + 1] = Math.round((g / (N - 1)) * 255);
-        inputData.data[offset + 2] = Math.round((b / (N - 1)) * 255);
-        inputData.data[offset + 3] = 255;
-    }
-    inputCtx.putImageData(inputData, 0, 0);
-
-    // 3. Apply grade
-    const outputCanvas = document.createElement("canvas");
-    renderEngine(outputCanvas, inputCanvas, lutState);
-
-    // 4. Read back graded pixels
-    const outputCtx = outputCanvas.getContext("2d");
-    const outputData = outputCtx.getImageData(0, 0, totalEntries, 1).data;
-
-    // 5. Build the ICC tag data blobs
+    // 3. Build the ICC tag data blobs
     const descTag  = buildDescTag("ColorTheater LUT");
     const cprtTag  = buildCprtTag("ColorTheater");
     const lut16Tag = buildLut16Tag(N, outputData);
 
-    // 6. Compute tag offsets (all tags start after the 128-byte header + tag table).
+    // 4. Compute tag offsets (all tags start after the 128-byte header + tag table).
     //    Tag table: 4 bytes (count) + 3 tags × 12 bytes = 40 bytes → tags start at offset 168.
     const TAG_COUNT = 3;
     const tagsStart = 128 + 4 + TAG_COUNT * 12; // = 168
@@ -315,7 +314,7 @@ export function generateIccLUT(gridSize, state) {
 
     const totalSize   = lut16Offset + lut16Size;
 
-    // 7. Assemble the full profile buffer
+    // 5. Assemble the full profile buffer
     const buffer = new ArrayBuffer(totalSize);
     const view   = new DataView(buffer);
     const bytes  = new Uint8Array(buffer);

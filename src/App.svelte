@@ -80,13 +80,14 @@
     }
 
     let lutGridSize = $state(33);
+    let lutFormat = $state("cube");
     function handleLutExport() {
-        const lut = generateCubeLUT(lutGridSize, gradeState);
-        const blob = new Blob([lut], { type: "text/plain" });
+        const lut = (lutFormat === "icc") ? generateIccLUT(lutGridSize, gradeState) : generateCubeLUT(lutGridSize, gradeState);
+        const blob = new Blob([lut], { type: (lutFormat === "icc") ? "application/vnd.iccprofile" : "text/plain" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "colortheater-lut.cube";
+        a.download = "colortheater-lut." + lutFormat;
         a.click();
     }
 
@@ -124,7 +125,11 @@
             </select>
         </div>
         <div style:display="inline-flex" style:margin="6px">
-            <button onclick={handleLutExport}>Export LUT (.CUBE)</button>
+            <button onclick={handleLutExport}>Export LUT</button>
+            <select bind:value={lutFormat}>
+                <option value="cube">CUBE</option>
+                <option value="icc">ICC</option>
+            </select>
             <select bind:value={lutGridSize}>
                 <option value={17}>17 pt</option>
                 <option value={33}>33 pt</option>
