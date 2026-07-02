@@ -2,6 +2,9 @@
     import { builtInPresets, applyPreset, exportPreset, importPreset } from "../../utils/builtInPresets.js";
     import { gradeState, previewRefs } from "../../state.svelte";
     import renderEngine from "../../renderEngine";
+    import { readMetadataLayer } from "../../utils/photopeaScripts.js";
+
+    let { isPhotopea = false } = $props();
 
     let open = $state(false);
 
@@ -101,6 +104,14 @@
         <button class="dropdown-item import-btn" onclick={handleImport}>
             Import Preset File...
         </button>
+        {#if isPhotopea}
+            <button class="dropdown-item import-btn" onclick={async () => {
+                const layerContents = await readMetadataLayer();
+                if (layerContents && layerContents !== "done") {
+                    importPreset(layerContents, gradeState);
+                }
+            }}>Use Metadata Layer</button>
+        {/if}
         <div class="dropdown-divider"></div>
         <div class="dropdown-label">Built-in Presets</div>
         {#each builtInPresets as preset}

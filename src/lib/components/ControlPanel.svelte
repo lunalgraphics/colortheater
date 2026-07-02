@@ -9,6 +9,8 @@
     let dragging = $state(false);
     let isSmallScreen = $state(window.matchMedia("(max-width: 555px)").matches);
 
+    let { isPhotopea = false } = $props();
+
     $effect(() => {
         const mq = window.matchMedia("(max-width: 555px)");
         const handler = (e) => { isSmallScreen = e.matches; };
@@ -54,7 +56,7 @@
         <div class="dots"></div>
     </div>
     <div id="controlpanel">
-        <PresetControls /> <hr />
+        <PresetControls isPhotopea /> <hr />
         <BasicControls /> <hr />
         <MatrixControls /> <hr />
         <TintControls /> <hr />

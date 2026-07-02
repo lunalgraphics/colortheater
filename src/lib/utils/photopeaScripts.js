@@ -7,6 +7,14 @@ import { exportPreset } from "./builtInPresets";
 let _photopeaObject;
 let _vignetteCanvas;
 
+/** For preset picker Use Metadata Layer feature */
+export async function readMetadataLayer() {
+    const pea = getPhotopeaObject();
+    const layerContents = (await pea.runScript(`app.echoToOE(app.activeDocument.activeLayer.textItem.contents)`))[0];
+    //if (!layerContents || layerContents === "done") await pea.runScript("alert('Selected layer must be ct-metadata layer.');");
+    return layerContents;
+}
+
 /**
  * Handles a Photopea export request.
  */

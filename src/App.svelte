@@ -112,7 +112,7 @@
     <canvas bind:this={canvasEl}></canvas>
 </div>
 
-<ControlPanel />
+<ControlPanel isPhotopea />
 
 <div id="bottompanel">
     {#if !isPhotopea}
