@@ -1,3 +1,5 @@
+import createVignetteBuffer from "./createVignetteBuffer";
+
 /**
  * Renders the color-graded preview onto a <canvas> element.
  * Reads all parameters from the state object passed in — no DOM/SVG querying.
@@ -79,17 +81,7 @@ export default function renderEngine(canvas, image, state) {
         ctx.globalAlpha = state.vignetteOpacity / 100;
 
         // Render vignette gradient into an offscreen buffer
-        const vBuffer = document.createElement("canvas");
-        vBuffer.width = 512;
-        vBuffer.height = 512;
-        const vCtx = vBuffer.getContext("2d");
-        const grad = vCtx.createRadialGradient(256, 256, 0, 256, 256, 256);
-        // Inner stop: transparent from center outward based on size
-        const innerOffset = (100 - state.vignetteSize) / 100;
-        grad.addColorStop(innerOffset, state.vignetteColor + "00");
-        grad.addColorStop(1, state.vignetteColor);
-        vCtx.fillStyle = grad;
-        vCtx.fillRect(0, 0, 512, 512);
+        const vBuffer = createVignetteBuffer(512, state.vignetteSize, state.vignetteColor);
 
         // Draw stretched to cover canvas with 22% overflow (matches original ellipse rx/ry = 72%)
         ctx.drawImage(vBuffer, -w * 0.22, -h * 0.22, w * 1.44, h * 1.44);
