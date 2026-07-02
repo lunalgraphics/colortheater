@@ -1,0 +1,22 @@
+{
+  "name": "colortheater",
+  "private": true,
+  "version": "3.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:photopea": "node scripts/test-photopea-plugin.js",
+    "build": "vite build",
+    "build:electron": "cross-env VITE_PLATFORM=electron vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^7.1.2",
+    "cross-env": "^10.1.0",
+    "svelte": "^5.56.3",
+    "vite": "^8.1.0"
+  },
+  "dependencies": {
+    "photopea": "^1.1.2"
+  }
+}
