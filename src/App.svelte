@@ -9,6 +9,7 @@
 
     import ControlPanel from "./lib/components/ControlPanel.svelte";
     import { generateCubeLUT, generateIccLUT } from "./lib/utils/LutUtils.js";
+    import { handlePhotopeaExport } from "./lib/utils/photopeaScripts.js";
 
     let canvasEl;
     let imageEl;
@@ -131,38 +132,7 @@
             </select>
         </div>
     {:else if isPhotopea}
-        <button onclick={async () => {
-            const lut = generateIccLUT(9, gradeState);
-            const iccBinString = Array.from(lut).join(",");
-
-            const pea = new Photopea(window.parent);
-
-            const cLookupScript = `
-                var desc = new ActionDescriptor();
-                var ref = new ActionReference();
-                ref.putClass(stringIDToTypeID("adjustmentLayer"));
-                desc.putReference(charIDToTypeID("null"), ref);
-                var adjDesc = new ActionDescriptor();
-                adjDesc.putString(charIDToTypeID("Nm  "), "file");
-                var typeDesc = new ActionDescriptor();
-                adjDesc.putObject(charIDToTypeID("Type"), stringIDToTypeID("colorLookup"), typeDesc);
-                desc.putObject(charIDToTypeID("Usng"), stringIDToTypeID("adjustmentLayer"), adjDesc);
-                executeAction(charIDToTypeID("Mk  "), desc, DialogModes.NO);
-
-                var idsetd = charIDToTypeID("setd");
-                var mainDesc = new ActionDescriptor();
-                var ref = new ActionReference();
-                ref.putEnumerated(charIDToTypeID("AdjL"), charIDToTypeID("Ordn"), charIDToTypeID("Trgt"));
-                mainDesc.putReference(charIDToTypeID("null"), ref);
-                var lutDesc = new ActionDescriptor();
-                lutDesc.putEnumerated(stringIDToTypeID("lookupType"), stringIDToTypeID("colorLookupType"), stringIDToTypeID("3DLUT"));
-                lutDesc.putString(charIDToTypeID("Nm  "), "ColorTheaterLUT.icc");
-                lutDesc.putData(stringIDToTypeID("profile"), String.fromCharCode(${iccBinString}) );
-                mainDesc.putObject(charIDToTypeID("T   "), stringIDToTypeID("colorLookup"), lutDesc);
-                executeAction(idsetd, mainDesc, DialogModes.NO);
-            `;
-            await pea.runScript(cLookupScript);
-        }}>Finish</button>
+        <button onclick={handlePhotopeaExport}>Finish</button>
     {/if}
 </div>
 
