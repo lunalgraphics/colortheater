@@ -8,8 +8,15 @@
     /** Whether we're currently showing a hover preview (to know when to restore) */
     let previewing = $state(false);
 
-    function toggleDropdown() {
+    let dropdownPos = $state({ top: 0, left: 0, })
+
+    function toggleDropdown(e) {
         open = !open;
+        if (open) {
+            const bbox = e.target.getBoundingClientRect();
+            dropdownPos.top = bbox.bottom;
+            dropdownPos.left = bbox.left;
+        }
     }
 
     function closeDropdown() {
@@ -86,28 +93,28 @@
 <div style="text-align: center;" class="preset-picker">
     <button onclick={toggleDropdown}>Use a Preset</button>
     <button onclick={handleExportPreset}>Export Preset</button>
-
-    {#if open}
-        <!-- svelte-ignore a11y_no_static_element_interactions -->
-        <div class="dropdown" onmouseleave={handlePresetLeave}>
-            <button class="dropdown-item import-btn" onclick={handleImport}>
-                Import Preset File...
-            </button>
-            <div class="dropdown-divider"></div>
-            <div class="dropdown-label">Built-in Presets</div>
-            {#each builtInPresets as preset}
-                <button
-                    class="dropdown-item"
-                    onclick={() => selectPreset(preset)}
-                    onmouseenter={() => handlePresetHover(preset)}
-                    onmouseleave={handlePresetLeave}
-                >
-                    {preset.name}
-                </button>
-            {/each}
-        </div>
-    {/if}
 </div>
+
+{#if open}
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div class="dropdown" onmouseleave={handlePresetLeave} style:--dropdown-top="{dropdownPos.top}px" style:--dropdown-left="{dropdownPos.left}px">
+        <button class="dropdown-item import-btn" onclick={handleImport}>
+            Import Preset File...
+        </button>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-label">Built-in Presets</div>
+        {#each builtInPresets as preset}
+            <button
+                class="dropdown-item"
+                onclick={() => selectPreset(preset)}
+                onmouseenter={() => handlePresetHover(preset)}
+                onmouseleave={handlePresetLeave}
+            >
+                {preset.name}
+            </button>
+        {/each}
+    </div>
+{/if}
 
 <style>
     .preset-picker {
@@ -115,17 +122,15 @@
     }
 
     .dropdown {
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        transform: translateX(-50%);
+        position: fixed;
+        top: var(--dropdown-top);
+        left: var(--dropdown-left);
         z-index: 20;
         background: #2a2a2a;
         border: 1px solid #555;
         border-radius: 4px;
-        margin-top: 4px;
         min-width: 180px;
-        max-height: 300px;
+        max-height: calc(100vh - var(--dropdown-top) - 10px);
         overflow-y: auto;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     }
