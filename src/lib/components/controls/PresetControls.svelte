@@ -1,7 +1,7 @@
 <script>
     import { builtInPresets, applyPreset, exportPreset, importPreset } from "../../utils/builtInPresets.js";
     import { gradeState, previewRefs } from "../../state.svelte";
-    import newPreview from "../../utils/canvStuff.js";
+    import renderEngine from "../../renderEngine";
 
     let open = $state(false);
 
@@ -68,7 +68,7 @@
         previewing = true;
         const { canvas, image } = previewRefs;
         if (!canvas || !image) return;
-        newPreview(canvas, image, buildPreviewState(preset));
+        renderEngine(canvas, image, buildPreviewState(preset));
     }
 
     function handlePresetLeave() {
@@ -77,7 +77,7 @@
         const { canvas, image } = previewRefs;
         if (!canvas || !image) return;
         // Restore the actual current state
-        newPreview(canvas, image, gradeState);
+        renderEngine(canvas, image, gradeState);
     }
 </script>
 

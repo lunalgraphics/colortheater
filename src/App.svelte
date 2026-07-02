@@ -1,5 +1,5 @@
 <script>
-    import newPreview from "./lib/utils/canvStuff.js";
+    import renderEngine from "./lib/renderEngine";
     import { gradeState, previewRefs } from "./lib/state.svelte.js";
     import { initHistory, pushHistory, handleUndoRedoKeydown } from "./lib/history.svelte.js";
 
@@ -17,7 +17,7 @@
 
     function renderPreview() {
         if (imageEl && imageEl.complete && imageEl.naturalWidth) {
-            newPreview(canvasEl, imageEl, gradeState);
+            renderEngine(canvasEl, imageEl, gradeState);
         }
     }
 

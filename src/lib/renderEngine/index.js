@@ -6,7 +6,7 @@
  * @param {HTMLImageElement | HTMLCanvasElement} image - Source image or canvas (must be loaded if an image)
  * @param {object} state - The gradeState object from state.svelte.js
  */
-export default function newPreview(canvas, image, state) {
+export default function renderEngine(canvas, image, state) {
     if (!image) return;
     // If it's an HTMLImageElement, check that it's loaded
     if (image instanceof HTMLImageElement && (!image.complete || !image.naturalWidth)) return;

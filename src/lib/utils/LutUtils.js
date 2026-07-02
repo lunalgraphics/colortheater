@@ -1,7 +1,7 @@
-import newPreview from "./canvStuff.js";
+import renderEngine from "../renderEngine";
 
 /**
- * Generates a .cube LUT file string by running newPreview on a synthetic
+ * Generates a .cube LUT file string by running renderEngine on a synthetic
  * identity-color strip and reading back the graded output.
  *
  * @param {number} gridSize - The LUT grid size (e.g. 17, 33, 65)
@@ -46,9 +46,9 @@ export function generateCubeLUT(gridSize, state) {
     }
     inputCtx.putImageData(inputData, 0, 0);
 
-    // 3. Apply newPreview to the input canvas to produce graded output
+    // 3. Apply renderEngine to the input canvas to produce graded output
     const outputCanvas = document.createElement("canvas");
-    newPreview(outputCanvas, inputCanvas, lutState);
+    renderEngine(outputCanvas, inputCanvas, lutState);
 
     // 4. Read back the graded pixels
     const outputCtx = outputCanvas.getContext("2d");
@@ -247,7 +247,7 @@ function buildLut16Tag(N, outputData) {
 }
 
 /**
- * Generates an ICC v2.4 DeviceLink profile (RGB→RGB) by running newPreview
+ * Generates an ICC v2.4 DeviceLink profile (RGB→RGB) by running renderEngine
  * on a synthetic identity-color strip and encoding the graded output into
  * a well-formed lut16Type (mft2) A2B0 tag.
  *
@@ -288,7 +288,7 @@ export function generateIccLUT(gridSize, state) {
 
     // 3. Apply grade
     const outputCanvas = document.createElement("canvas");
-    newPreview(outputCanvas, inputCanvas, lutState);
+    renderEngine(outputCanvas, inputCanvas, lutState);
 
     // 4. Read back graded pixels
     const outputCtx = outputCanvas.getContext("2d");
