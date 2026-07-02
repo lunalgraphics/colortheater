@@ -1,12 +1,23 @@
 import createVignetteBuffer from "./createVignetteBuffer";
 
 /**
- * Renders the color-graded preview onto a <canvas> element.
- * Reads all parameters from the state object passed in — no DOM/SVG querying.
+ * Main rendering pipeline for Color Theater.
  *
- * @param {HTMLCanvasElement} canvas - Target canvas element
- * @param {HTMLImageElement | HTMLCanvasElement} image - Source image or canvas (must be loaded if an image)
- * @param {object} state - The gradeState object from state.svelte.js
+ * Draws a color-graded image onto `canvas` by compositing five sequential passes:
+ *   1. Basic adjustments  — CSS filter (brightness/contrast/saturation/sepia)
+ *   2. Color matrix       — WebGL fragment shader (GPU-accelerated, singleton context)
+ *   3. Tint overlay       — soft-light filled rectangle
+ *   4. Split toning       — color-dodge (highlights) + color-burn (shadows)
+ *   5. Vignette           — radial gradient blitted with the chosen blend mode
+ *
+ * The function is intentionally "pure-ish": it reads from `state` and writes to
+ * `canvas`, with no side effects other than the shared WebGL singleton in `getGLState`.
+ * This means it can safely be called with any state-shaped object — the LUT exporter
+ * exploits this to grade synthetic identity-color strips.
+ *
+ * @param {HTMLCanvasElement} canvas - Target canvas element to draw into
+ * @param {HTMLImageElement | HTMLCanvasElement} image - Source image (must be loaded)
+ * @param {object} state - A gradeState-like object from state.svelte.js
  */
 export default function renderEngine(canvas, image, state) {
     if (!image) return;
@@ -41,6 +52,9 @@ export default function renderEngine(canvas, image, state) {
     }
 
     // --- 3. Tint overlay (soft-light blend) ---
+    // Amount 0–100: one soft-light pass at the given opacity.
+    // Amount 100–200: first pass is fully opaque, second pass adds the excess.
+    // Two passes allow the tint to become very strong without losing all detail.
     if (state.tintAmount > 0) {
         ctx.save();
         ctx.globalCompositeOperation = "soft-light";
@@ -56,7 +70,13 @@ export default function renderEngine(canvas, image, state) {
         ctx.restore();
     }
 
-    // --- 4. Split toning (highlights via color-dodge, shadows via color-burn) ---
+    // --- 4. Split toning ---
+    // Highlights: color-dodge with a brightness-scaled fill.
+    //   color-dodge brightens the image toward the fill color, so bright areas pick up the hue.
+    //   `brightness(N%)` on the fill reduces how much dodge is applied (lower = more subtle).
+    // Shadows: color-burn with an inverted brightness-scaled fill.
+    //   color-burn darkens toward the fill color, so dark areas pick up the hue.
+    //   The invert-brightness-invert trick maps the amount control to the same 0–100 range.
     if (state.highlightAmount > 0) {
         ctx.save();
         ctx.globalCompositeOperation = "color-dodge";
@@ -75,6 +95,10 @@ export default function renderEngine(canvas, image, state) {
     }
 
     // --- 5. Vignette ---
+    // The vignette buffer is a 512×512 radial gradient rendered by createVignetteBuffer.
+    // It's drawn with 22% overflow on each side (total scale 1.44×) so the gradient
+    // extends beyond the frame edges and only the soft falloff region is visible —
+    // this prevents a hard ring at the canvas boundary.
     if (state.vignetteOpacity > 0) {
         ctx.save();
         ctx.globalCompositeOperation = state.vignetteBlending;
@@ -107,7 +131,9 @@ function flattenColorMatrix(matrix) {
 }
 
 // --- Singleton WebGL context for color matrix operations ---
-// Avoids the cost of creating a canvas, compiling shaders, and linking a program every frame.
+// The WebGL setup cost (canvas creation, shader compilation, program linking, buffer
+// allocation) is paid once and reused across all subsequent frames. On each call,
+// only three things change: the texture pixels, the uniform matrix, and the viewport.
 
 /** @type {{ canvas: HTMLCanvasElement, gl: WebGLRenderingContext, program: WebGLProgram, texture: WebGLTexture, locs: { matrix: WebGLUniformLocation, offset: WebGLUniformLocation, resolution: WebGLUniformLocation } } | null} */
 let glState = null;
@@ -124,6 +150,11 @@ function getGLState() {
         void main() { gl_Position = vec4(p, 0, 1); }
     `;
 
+    // The fragment shader implements the SVG feColorMatrix formula:
+    //   outColor = (inColor × 4×4_matrix) + offset_vector
+    // The matrix is transposed when uploaded because WebGL uses column-major order
+    // but the SVG spec (and our state) uses row-major order.
+    // `clamp` prevents out-of-[0,1] values that would show as black or white fringing.
     const fs = `
         precision mediump float;
         uniform sampler2D tex;

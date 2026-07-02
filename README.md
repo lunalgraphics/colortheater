@@ -1,43 +1,142 @@
-# Svelte + Vite
+![Color Theater banner](src/lib/assets/banner.png)
 
-This template should help get you started developing with Svelte in Vite.
+# Color Theater
 
-## Recommended IDE Setup
+Color Theater is a color grading tool for digital artists. It runs as a standalone web app, a desktop app via Electron, and as a plugin inside [Photopea](https://www.photopea.com).
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
+**[Try it live →](https://lunalgraphics.com/about-colortheater)**
 
-## Need an official Svelte framework?
+---
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+## Features
 
-## Technical considerations
+- **Basic Adjustments** — Brightness, contrast, saturation, sepia
+- **Color Matrix** — Full 3×4 input-to-output channel matrix with offset column
+- **Tint** — Soft-light color overlay with hue/saturation wheel
+- **Split Toning** — Independent color toning for highlights and shadows via color-dodge/burn
+- **Vignette** — Radial gradient edge darkening with blending mode control
+- **Presets** — Built-in named looks (Golden Hour, Gotham, Monet, etc.) with hover-preview; import/export as `.ctpreset.json`
+- **LUT Export** — Export your grade as a `.cube` (industry-standard) or `.icc` (ICC DeviceLink) file at 17, 33, or 65 grid size
+- **Undo/Redo** — Full history with `Ctrl+Z` / `Ctrl+Shift+Z`
+- **Photopea integration** — Opens the active document directly from Photopea; exports the grade back as a Color Lookup adjustment layer with an embedded ICC LUT and metadata
 
-**Why use this over SvelteKit?**
+---
 
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
+## Getting Started
 
-This template contains as little as possible to get started with Vite + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
+### Requirements
 
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
+- [Node.js](https://nodejs.org) 18+
+- npm 9+
 
-**Why include `.vscode/extensions.json`?**
+### Install
 
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
-
-**Why enable `checkJs` in the JS template?**
-
-It is likely that most cases of changing variable types in runtime are likely to be accidental, rather than deliberate. This provides advanced typechecking out of the box. Should you like to take advantage of the dynamically-typed nature of JavaScript, it is trivial to change the configuration.
-
-**Why is HMR not preserving my local component state?**
-
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/sveltejs/svelte-hmr/tree/master/packages/svelte-hmr#preservation-of-local-state).
-
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
-
-```js
-// store.js
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
+```bash
+git clone https://github.com/lunalgraphics/colortheater.git
+cd colortheater
+npm install
 ```
+
+### Run in development
+
+```bash
+npm run dev
+```
+
+Opens at `http://localhost:5173`.
+
+### Build for web
+
+```bash
+npm run build
+```
+
+Output goes to `dist/`. The CI workflow automatically deploys this to GitHub Pages on every push to `master`.
+
+### Build for Electron (desktop)
+
+```bash
+npm run build:electron
+cd electron-app
+npm install
+npm run build          # builds for all platforms
+npm run build:win32    # Windows only
+npm run build:darwin   # macOS only
+npm run build:linux    # Linux only
+```
+
+The Vite build targets `electron-app/app/` when `VITE_PLATFORM=electron`. Electron Builder packages it as a portable `.exe` (Windows), `.zip` (macOS), or `.deb` (Linux).
+
+### Test the Photopea plugin locally
+
+```bash
+npm run dev:photopea
+```
+
+---
+
+## Project Structure
+
+```
+src/
+├── App.svelte                      # Root component — layout, image loading, export
+├── app.css                         # Global styles and CSS layout
+├── lib/
+│   ├── state.svelte.js             # Global reactive state (gradeState)
+│   ├── history.svelte.js           # Undo/redo history
+│   ├── renderEngine/
+│   │   ├── index.js                # Main Canvas/WebGL render pipeline
+│   │   └── createVignetteBuffer.js # Offscreen vignette gradient renderer
+│   ├── utils/
+│   │   ├── color.js                # Color class (RGB ↔ HSL ↔ HSB ↔ hex)
+│   │   ├── builtInPresets.js       # Built-in presets + import/export logic
+│   │   ├── LutUtils.js             # .cube and ICC LUT generation
+│   │   └── photopeaScripts.js      # Photopea Action Manager integration
+│   ├── components/
+│   │   ├── ControlPanel.svelte     # Resizable sidebar wrapper
+│   │   ├── HueSatWheel.svelte      # Circular hue/saturation picker
+│   │   ├── Slider.svelte           # Custom slider (horizontal/vertical)
+│   │   └── controls/
+│   │       ├── BasicControls.svelte
+│   │       ├── MatrixControls.svelte
+│   │       ├── TintControls.svelte
+│   │       ├── SplitToningControls.svelte
+│   │       ├── VignetteControls.svelte
+│   │       └── PresetControls.svelte
+│   └── svelte-attachments/
+│       ├── scrollWheelValue.svelte.js  # Scroll-wheel increment for number inputs
+│       └── dragwheelValue.svelte.js    # Click-drag scrub for number inputs
+electron-app/
+├── main.js                         # Electron main process
+└── package.json                    # Electron app metadata and build config
+```
+
+---
+
+## Architecture Overview
+
+### State
+
+All grading parameters live in a single Svelte 5 `$state` object exported from `state.svelte.js`. Values are stored in "display units" (percentages, hex strings) and converted to rendering units only inside `renderEngine`.
+
+### Render Pipeline
+
+`renderEngine(canvas, image, state)` draws to a `<canvas>` element in five sequential passes:
+
+1. **Basic adjustments** — CSS `filter` (brightness, contrast, saturate, sepia) via `ctx.filter`
+2. **Color matrix** — WebGL fragment shader applied via a persistent singleton GL context
+3. **Tint** — `soft-light` composite fill
+4. **Split toning** — `color-dodge` fill for highlights, `color-burn` + invert for shadows
+5. **Vignette** — Radial gradient blitted with the chosen blend mode
+
+Because the render function accepts any state-shaped object, LUT generation works by running `renderEngine` over a synthetic identity-color strip and reading back the output pixels.
+
+### Preset Format
+
+Presets are JSON objects with `version: 2`. The legacy `.ctxml` format from older versions is still supported on import. New presets should use the JSON format.
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE).
