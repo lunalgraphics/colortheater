@@ -65,7 +65,7 @@ export async function handlePhotopeaExport() {
 async function addColorLookupLayer() {
     const pea = getPhotopeaObject();
 
-    const lut = generateIccLUT(9, gradeState);
+    const lut = generateIccLUT(17, gradeState);
     const iccBinString = Array.from(lut).join(",");
 
     const cLookupScript = `
@@ -74,7 +74,7 @@ async function addColorLookupLayer() {
         ref.putClass(stringIDToTypeID("adjustmentLayer"));
         desc.putReference(charIDToTypeID("null"), ref);
         var adjDesc = new ActionDescriptor();
-        adjDesc.putString(charIDToTypeID("Nm  "), "file");
+        adjDesc.putString(charIDToTypeID("Nm  "), "LUT");
         var typeDesc = new ActionDescriptor();
         adjDesc.putObject(charIDToTypeID("Type"), stringIDToTypeID("colorLookup"), typeDesc);
         desc.putObject(charIDToTypeID("Usng"), stringIDToTypeID("adjustmentLayer"), adjDesc);
