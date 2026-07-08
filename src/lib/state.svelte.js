@@ -83,3 +83,11 @@ export const previewRefs = {
     /** @type {HTMLImageElement | null} */
     image: null,
 };
+
+/**
+ * Build platform (standalone app vs. Photopea plugin vs. Photoshop plugin)
+ */
+export let buildConfig = $state({
+    /** @type {"standalone" | "photopea" | "photoshop"} */
+    platform: "standalone",
+});

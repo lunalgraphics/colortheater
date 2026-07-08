@@ -1,6 +1,6 @@
 <script>
     import renderEngine from "./lib/renderEngine";
-    import { gradeState, previewRefs } from "./lib/state.svelte.js";
+    import { gradeState, previewRefs, buildConfig } from "./lib/state.svelte.js";
     import { initHistory, pushHistory, handleUndoRedoKeydown } from "./lib/history.svelte.js";
 
     import { onMount } from "svelte";
@@ -14,7 +14,6 @@
     let canvasEl;
     let imageEl;
     let showWelcome = $state(true);
-    let isPhotopea = $state(false);
 
     function renderPreview() {
         if (imageEl && imageEl.complete && imageEl.naturalWidth) {
@@ -94,9 +93,9 @@
     onMount(() => {
         previewRefs.canvas = canvasEl;
         initHistory();
-        isPhotopea = new URLSearchParams(location.search).get("portal") === "photopea";
-
-        if (isPhotopea) {
+        if (new URLSearchParams(location.search).get("portal") === "photopea") {
+            buildConfig.platform = "photopea";
+            
             const pea = new Photopea(window.parent);
             pea.exportImage("png").then((blob) => {
                 const url = URL.createObjectURL(blob);
@@ -113,10 +112,10 @@
     <canvas bind:this={canvasEl}></canvas>
 </div>
 
-<ControlPanel isPhotopea />
+<ControlPanel />
 
 <div id="bottompanel">
-    {#if !isPhotopea}
+    {#if buildConfig.platform === "standalone"}
         <div style:display="inline-flex" style:margin="6px">
             <button onclick={handleImageExport}>Export Image</button>
             <select bind:value={imageExportType}>
@@ -136,7 +135,7 @@
                 <option value={65}>65 pt</option>
             </select>
         </div>
-    {:else if isPhotopea}
+    {:else if buildConfig.platform === "photopea"}
         <button onclick={handlePhotopeaExport}>Finish</button>
     {/if}
 </div>
@@ -145,7 +144,7 @@
     <div id="welcomescreen">
         <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: center;">
             <img src={bannerImg} draggable="false" width="420" style:max-width="90vw" alt="Color Theater" /> <br />
-            {#if !isPhotopea}
+            {#if buildConfig.platform === "standalone"}
                 <label class="button" style:padding="6px 14px">
                     Upload image
                     <input type="file" accept="image/*" onchange={handleFileUpload} style:display="none" />
