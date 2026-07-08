@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
     outDir = 'electron-app/app';
   }
   else if (env.VITE_PLATFORM === 'photoshop') {
-    outDir = 'photoshop-plugin/frame-contents';
+    outDir = 'photoshop-plugin/webview-contents';
   }
 
   return {
