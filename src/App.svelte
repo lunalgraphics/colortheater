@@ -151,6 +151,8 @@
         </div>
     {:else if buildConfig.platform === "photopea"}
         <button onclick={handlePhotopeaExport}>Finish</button>
+    {:else if buildConfig.platform === "photoshop"}
+        <button onclick={() => { window.uxpHost.postMessage({ type: "export", preset: JSON.stringify(gradeState) }); }}>Export</button>
     {/if}
 </div>
 
