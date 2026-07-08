@@ -1,0 +1,48 @@
+<dialog id="dialog" style="padding: 0;">
+    <webview id="container" width="100vw" height="100vh" src="plugin:/webview-contents/index.html?isPhotoshopPlugin=yeah"></webview>
+</dialog>
+
+<div style="width: 100vw; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    <button id="launchBtn">New Color Grade</button>
+    <button id="editSelectedBtn">Edit Selected Group</button>
+</div>
+
+<div id="banner_image"></div>
+
+<div style="position: fixed; bottom: 0; left: 0; width: 100vw; padding: 10px; box-sizing: border-box; text-align: center; color: var(--primary-color);">
+    <a href="https://lunalgraphics.com/about-colortheater" target="_blank">Learn more</a>
+    <br />
+    <a href="https://github.com/lunalgraphics/colortheater/issues" target="_blank">Report a bug</a>
+    <br />
+    &copy; 2026 Yikuan Sun
+</div>
+
+<script src="./index.js"></script>
+
+<style>
+    :root {
+        --primary-color: #E8E8E8; /* default colors are for dark themes */
+    }
+
+    #banner_image {
+        display: block;
+        position: fixed;
+        top: 25px;
+        left: 50vw;
+        transform: translate(-50%, -50%);
+        width: 180px;
+        height: 60px;
+        background-image: url(./banner_dark.png);
+        background-size: contain;
+    }
+
+    @media (prefers-color-scheme: lightest), (prefers-color-scheme:light) {
+        :root {
+            --primary-color: #181818; /* override for light themes */
+        }
+
+        #banner_image {
+            background-image: url(./banner_light.png);
+        }
+    }
+</style>

@@ -11,9 +11,13 @@
     import { generateCubeLUT, generateIccLUT } from "./lib/utils/LutUtils.js";
     import { handlePhotopeaExport } from "./lib/utils/photopeaScripts.js";
 
+    /** @type {HTMLCanvasElement} */
     let canvasEl;
+    /** @type {HTMLImageElement} */
     let imageEl;
     let showWelcome = $state(true);
+
+    if (import.meta.env.VITE_PLATFORM === "photoshop") buildConfig.platform = "photoshop";
 
     function renderPreview() {
         if (imageEl && imageEl.complete && imageEl.naturalWidth) {
@@ -101,6 +105,16 @@
                 const url = URL.createObjectURL(blob);
                 loadImage(url);
             });
+        }
+        if (buildConfig.platform === "photoshop") {
+            window.addEventListener("message", (e) => {
+                if (typeof e.data === "string") e.data = JSON.parse(e.data);
+                if (e.data.type === "init") {
+                    initHistory();
+                    loadImage(e.data.baseImg);
+                }
+            });
+            window.uxpHost.postMessage({ type: "webViewLoaded", data: true });
         }
     });
 

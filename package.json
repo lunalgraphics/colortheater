@@ -8,6 +8,7 @@
     "dev:photopea": "node scripts/test-photopea-plugin.js",
     "build": "vite build",
     "build:electron": "cross-env VITE_PLATFORM=electron vite build",
+    "build:photoshop": "cross-env VITE_PLATFORM=photoshop vite build",
     "preview": "vite preview"
   },
   "devDependencies": {

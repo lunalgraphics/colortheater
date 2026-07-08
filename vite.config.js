@@ -9,7 +9,10 @@ export default defineConfig(({ mode }) => {
   // Set output directory based on env var, fallback to 'dist'
   let outDir = 'dist';
   if (env.VITE_PLATFORM === 'electron') {
-      outDir = 'electron-app/app';
+    outDir = 'electron-app/app';
+  }
+  else if (env.VITE_PLATFORM === 'photoshop') {
+    outDir = 'photoshop-plugin/frame-contents';
   }
 
   return {
