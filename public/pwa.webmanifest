@@ -1,0 +1,15 @@
+{
+  "short_name": "Color Theater",
+  "name": "Color Theater by Lunal Graphics",
+  "icons": [
+    {
+      "src": "./icon.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#222222",
+  "background_color": "#222222"
+}
