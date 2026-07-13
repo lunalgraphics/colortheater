@@ -38,15 +38,26 @@ window.addEventListener("message", (e) => {
 function handleExport(data) {
   modal.close();
 
-  // TODO: implement history state freeze (combine all export actions into one history state)
+  core.executeAsModal(async (executionContext) => {
+    const doc = app.activeDocument;
+    const suspensionID = await executionContext.hostControl.suspendHistory({
+      documentID: doc.id,
+      name: "Export Color Theater",
+    });
 
-  core.executeAsModal(async () => {
-    if (data.editing !== "yes") {
-      await exportColorGrade(data);
-    } else {
-      // TODO: update existing color grade group (create new function)
+    let commitHistory = false;
+    try {
+      if (data.editing !== "yes") {
+        await exportColorGrade(data);
+      } else {
+        // TODO: update existing color grade group (create new function)
+      }
+
+      commitHistory = true;
+    } finally {
+      await executionContext.hostControl.resumeHistory(suspensionID, commitHistory);
     }
-  }).catch((err) => core.showAlert(err));
+  }, { commandName: "Export Color Theater" }).catch((err) => core.showAlert(err));
 }
 
 async function exportColorGrade(data) {
