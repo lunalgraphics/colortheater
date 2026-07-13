@@ -7,7 +7,6 @@
  */
 
 const { app, core, imaging, constants, action } = require("photoshop");
-const { storage } = require("uxp");
 
 // ─── DOM References ──────────────────────────────────────────────────
 
@@ -43,15 +42,91 @@ function handleExport(data) {
 
   core.executeAsModal(async () => {
     if (data.editing !== "yes") {
-      await exportColorGrade(data.preset);
+      await exportColorGrade(data);
     } else {
       // TODO: update existing color grade group (create new function)
     }
   }).catch((err) => core.showAlert(err));
 }
 
-async function exportColorGrade(preset) {
-  // TODO: add group with metadata layer, color lookup, and vignette layer. Same logic as Photopea export.
+async function exportColorGrade(data) {
+  const doc = app.activeDocument;
+  if (!data.pixelsBase64) {
+    throw new Error("Export payload is missing rendered pixels. Rebuild and reload the Photoshop plugin webview.");
+  }
+
+  const pixels = base64ToUint8Array(data.pixelsBase64);
+  const imageData = await imaging.createImageDataFromBuffer(pixels, {
+    width: data.width || doc.width,
+    height: data.height || doc.height,
+    components: 4,
+    chunky: true,
+    colorSpace: "RGB",
+  });
+
+  const renderLayer = await doc.createLayer(constants.LayerKind.NORMAL, {
+    name: "render",
+  });
+  await imaging.putPixels({
+    documentID: doc.id,
+    layerID: renderLayer.id,
+    imageData,
+    replace: true,
+  });
+  imageData.dispose();
+  renderLayer.bringToFront();
+
+  const metadataLayer =
+    typeof doc.createTextLayer === "function"
+      ? await doc.createTextLayer({
+          contents: data.metadata || "",
+          position: { x: 0, y: 0 },
+          fontSize: 12,
+        })
+      : await doc.createLayer(constants.LayerKind.TEXT, {
+          contents: data.metadata || "",
+        });
+  metadataLayer.name = "ct-metadata";
+  metadataLayer.visible = false;
+  metadataLayer.bringToFront();
+
+  doc.activeLayers = [renderLayer, metadataLayer];
+  await action.batchPlay(
+    [
+      {
+        _obj: "newPlacedLayer",
+        _isCommand: true,
+        _options: { dialogOptions: "dontDisplay" },
+      },
+    ],
+    {}
+  );
+
+  doc.activeLayers[0].name = "Color Theater";
+}
+
+function base64ToUint8Array(value) {
+  const lookup = new Uint8Array(256);
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  for (let i = 0; i < alphabet.length; i++) lookup[alphabet.charCodeAt(i)] = i;
+
+  const padding = value.endsWith("==") ? 2 : value.endsWith("=") ? 1 : 0;
+  const bytes = new Uint8Array((value.length * 3) / 4 - padding);
+  let byteIndex = 0;
+
+  for (let i = 0; i < value.length; i += 4) {
+    const encoded =
+      (lookup[value.charCodeAt(i)] << 18) |
+      (lookup[value.charCodeAt(i + 1)] << 12) |
+      (lookup[value.charCodeAt(i + 2)] << 6) |
+      lookup[value.charCodeAt(i + 3)];
+
+    if (byteIndex < bytes.length) bytes[byteIndex++] = (encoded >> 16) & 0xff;
+    if (byteIndex < bytes.length) bytes[byteIndex++] = (encoded >> 8) & 0xff;
+    if (byteIndex < bytes.length) bytes[byteIndex++] = encoded & 0xff;
+  }
+
+  return bytes;
 }
 
 // ─── WebView Lifecycle ───────────────────────────────────────────────

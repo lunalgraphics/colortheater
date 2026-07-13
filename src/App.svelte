@@ -10,6 +10,7 @@
     import ControlPanel from "./lib/components/ControlPanel.svelte";
     import { generateCubeLUT, generateIccLUT } from "./lib/utils/LutUtils.js";
     import { handlePhotopeaExport } from "./lib/utils/photopeaScripts.js";
+    import { handlePhotoshopExport } from "./lib/utils/photoshopScripts";
 
     /** @type {HTMLCanvasElement} */
     let canvasEl;
@@ -152,7 +153,7 @@
     {:else if buildConfig.platform === "photopea"}
         <button onclick={handlePhotopeaExport}>Finish</button>
     {:else if buildConfig.platform === "photoshop"}
-        <button onclick={() => { window.uxpHost.postMessage({ type: "export", preset: JSON.stringify(gradeState) }); }}>Export</button>
+        <button onclick={handlePhotoshopExport}>Export</button>
     {/if}
 </div>
 
