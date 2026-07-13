@@ -92,12 +92,13 @@ async function exportColorGrade(data) {
       ? await doc.createTextLayer({
           contents: encodeMetadata(data.metadata || ""),
           position: { x: 0, y: 0 },
-          fontSize: 12,
+          fontSize: 1,
         })
       : await doc.createLayer(constants.LayerKind.TEXT, {
           contents: encodeMetadata(data.metadata || ""),
         });
   metadataLayer.name = "ct-metadata";
+  if (metadataLayer.textItem) metadataLayer.textItem.size = 1;
   metadataLayer.visible = false;
   metadataLayer.bringToFront();
 
@@ -178,6 +179,7 @@ async function replaceLayerPixels(doc, layer, data) {
 async function updateTextLayer(layer, contents) {
   if (layer.textItem) {
     layer.textItem.contents = contents;
+    layer.textItem.size = 1;
     return;
   }
 
@@ -204,12 +206,12 @@ function readTextLayer(layer) {
 }
 
 function encodeMetadata(value) {
-  return "CTMETA:" + encodeURIComponent(value);
+  return "CTMETA:" + encodeURIComponent(value).replace(/(.{24})/g, "$1\n");
 }
 
 function decodeMetadata(value) {
   if (value.startsWith("CTMETA:")) {
-    return decodeURIComponent(value.slice(7));
+    return decodeURIComponent(value.slice(7).replace(/\s+/g, ""));
   }
 
   return value
