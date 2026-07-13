@@ -1,4 +1,4 @@
-import { gradeState, previewRefs } from "../state.svelte";
+import { buildConfig, gradeState, previewRefs } from "../state.svelte";
 import { exportPreset } from "./builtInPresets";
 
 export async function handlePhotoshopExport() {
@@ -9,6 +9,7 @@ export async function handlePhotoshopExport() {
 
     window.uxpHost.postMessage({
         type: "export",
+        editing: buildConfig.editing,
         metadata: exportPreset(gradeState),
         pixelsBase64: uint8ArrayToBase64(new Uint8Array(imageData.data.buffer)),
         width: canvas.width,

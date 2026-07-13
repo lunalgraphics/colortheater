@@ -50,7 +50,7 @@ function handleExport(data) {
       if (data.editing !== "yes") {
         await exportColorGrade(data);
       } else {
-        // TODO: update existing color grade group (create new function)
+        await updateColorGrade(data);
       }
 
       commitHistory = true;
@@ -90,12 +90,12 @@ async function exportColorGrade(data) {
   const metadataLayer =
     typeof doc.createTextLayer === "function"
       ? await doc.createTextLayer({
-          contents: data.metadata || "",
+          contents: encodeMetadata(data.metadata || ""),
           position: { x: 0, y: 0 },
           fontSize: 12,
         })
       : await doc.createLayer(constants.LayerKind.TEXT, {
-          contents: data.metadata || "",
+          contents: encodeMetadata(data.metadata || ""),
         });
   metadataLayer.name = "ct-metadata";
   metadataLayer.visible = false;
@@ -114,6 +114,107 @@ async function exportColorGrade(data) {
   );
 
   doc.activeLayers[0].name = "Color Theater";
+}
+
+async function updateColorGrade(data) {
+  const parentDoc = app.activeDocument;
+  const targetLayer = parentDoc.activeLayers[0];
+  if (!targetLayer) throw new Error("Select a Color Theater Smart Object to update.");
+
+  await action.batchPlay(
+    [
+      {
+        _obj: "placedLayerEditContents",
+        _options: { dialogOptions: "dontDisplay" },
+      },
+    ],
+    {}
+  );
+
+  const smartDoc = app.activeDocument;
+  try {
+    const renderLayer = smartDoc.layers.find((layer) => layer.name === "render");
+    const metadataLayer = smartDoc.layers.find((layer) => layer.name === "ct-metadata");
+    if (!renderLayer || !metadataLayer) {
+      throw new Error("Selected Smart Object is missing Color Theater render or metadata layers.");
+    }
+
+    await replaceLayerPixels(smartDoc, renderLayer, data);
+    await updateTextLayer(metadataLayer, encodeMetadata(data.metadata || ""));
+    await smartDoc.save();
+  } finally {
+    await smartDoc.closeWithoutSaving();
+  }
+
+  parentDoc.activeLayers = [targetLayer];
+}
+
+async function replaceLayerPixels(doc, layer, data) {
+  if (!data.pixelsBase64) {
+    throw new Error("Export payload is missing rendered pixels. Rebuild and reload the Photoshop plugin webview.");
+  }
+
+  const pixels = base64ToUint8Array(data.pixelsBase64);
+  const imageData = await imaging.createImageDataFromBuffer(pixels, {
+    width: data.width || doc.width,
+    height: data.height || doc.height,
+    components: 4,
+    chunky: true,
+    colorSpace: "RGB",
+  });
+
+  try {
+    await imaging.putPixels({
+      documentID: doc.id,
+      layerID: layer.id,
+      imageData,
+      replace: true,
+    });
+  } finally {
+    imageData.dispose();
+  }
+}
+
+async function updateTextLayer(layer, contents) {
+  if (layer.textItem) {
+    layer.textItem.contents = contents;
+    return;
+  }
+
+  app.activeDocument.activeLayers = [layer];
+  await action.batchPlay(
+    [
+      {
+        _obj: "set",
+        _target: [{ _ref: "textLayer", _enum: "ordinal", _value: "targetEnum" }],
+        to: {
+          _obj: "textLayer",
+          textKey: contents,
+        },
+        _options: { dialogOptions: "dontDisplay" },
+      },
+    ],
+    {}
+  );
+}
+
+function readTextLayer(layer) {
+  if (layer.textItem) return decodeMetadata(layer.textItem.contents || "");
+  return "";
+}
+
+function encodeMetadata(value) {
+  return "CTMETA:" + encodeURIComponent(value);
+}
+
+function decodeMetadata(value) {
+  if (value.startsWith("CTMETA:")) {
+    return decodeURIComponent(value.slice(7));
+  }
+
+  return value
+    .replace(/[\u201c\u201d]/g, "\"")
+    .replace(/[\u2018\u2019]/g, "'");
 }
 
 function base64ToUint8Array(value) {
@@ -165,10 +266,20 @@ async function openModal(editing = false, preset = null) {
       return;
     }
 
-    const { imageData } = await imaging.getPixels({
-      documentID: app.activeDocument.id,
-      applyAlpha: true,
-    });
+    const doc = app.activeDocument;
+    const editLayer = editing ? doc.activeLayers[0] : null;
+    const wasVisible = editLayer?.visible;
+
+    let imageData;
+    try {
+      if (editLayer) editLayer.visible = false;
+      ({ imageData } = await imaging.getPixels({
+        documentID: doc.id,
+        applyAlpha: true,
+      }));
+    } finally {
+      if (editLayer) editLayer.visible = wasVisible;
+    }
 
     modal.uxpShowModal({
       title: "Color Theater",
@@ -198,9 +309,40 @@ async function editLayer() {
     return;
   }
 
-  const layer = app.activeDocument.activeLayers[0];
+  let preset = null;
+  try {
+    preset = await core.executeAsModal(async () => {
+      const parentDoc = app.activeDocument;
+      const targetLayer = parentDoc.activeLayers[0];
+      if (!targetLayer) throw new Error("Select a Color Theater Smart Object to edit.");
 
-  // TODO: read metadata layer from group (selected group or parent of selected layer)
+      await action.batchPlay(
+        [
+          {
+            _obj: "placedLayerEditContents",
+            _options: { dialogOptions: "dontDisplay" },
+          },
+        ],
+        {}
+      );
+
+      const smartDoc = app.activeDocument;
+      try {
+        const metadataLayer = smartDoc.layers.find((layer) => layer.name === "ct-metadata");
+        if (!metadataLayer) throw new Error("Selected Smart Object is missing Color Theater metadata.");
+
+        return readTextLayer(metadataLayer);
+      } finally {
+        await smartDoc.closeWithoutSaving();
+        parentDoc.activeLayers = [targetLayer];
+      }
+    }, { commandName: "Edit Color Theater" });
+  } catch (err) {
+    core.showAlert(err);
+    return;
+  }
+
+  await openModal(true, preset);
 }
 
 // ─── UI Button Bindings ──────────────────────────────────────────────

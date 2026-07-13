@@ -8,6 +8,7 @@
     import bannerImg from "./lib/assets/banner.png";
 
     import ControlPanel from "./lib/components/ControlPanel.svelte";
+    import { importPreset } from "./lib/utils/builtInPresets.js";
     import { generateCubeLUT, generateIccLUT } from "./lib/utils/LutUtils.js";
     import { handlePhotopeaExport } from "./lib/utils/photopeaScripts.js";
     import { handlePhotoshopExport } from "./lib/utils/photoshopScripts";
@@ -112,6 +113,8 @@
                 if (typeof e.data === "string") e.data = JSON.parse(e.data);
                 if (e.data.type === "init") {
                     initHistory();
+                    buildConfig.editing = e.data.editing || "no";
+                    if (e.data.preset) importPreset(e.data.preset, gradeState);
                     loadImage(e.data.baseImg);
                 }
             });
