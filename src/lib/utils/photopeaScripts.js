@@ -105,7 +105,7 @@ function getPhotopeaObject() {
 }
 
 /** @returns {HTMLCanvasElement} */
-function getVignetteCanvas() {
+export function getVignetteCanvas() {
     if (!_vignetteCanvas) {
         _vignetteCanvas = document.createElement("canvas");
     }

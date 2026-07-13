@@ -90,4 +90,6 @@ export const previewRefs = {
 export let buildConfig = $state({
     /** @type {"standalone" | "photopea" | "photoshop"} */
     platform: "standalone",
+    /** @type {"yes" | "no"} */
+    editing: "no",
 });
