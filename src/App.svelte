@@ -12,6 +12,7 @@
     import { generateCubeLUT, generateIccLUT } from "./lib/utils/LutUtils.js";
     import { handlePhotopeaExport } from "./lib/utils/photopeaScripts.js";
     import { handlePhotoshopExport } from "./lib/utils/photoshopScripts";
+    import { saveElectronFile } from "./lib/utils/electronScripts.js";
 
     /** @type {HTMLCanvasElement} */
     let canvasEl;
@@ -19,7 +20,21 @@
     let imageEl;
     let showWelcome = $state(true);
 
-    if (import.meta.env.VITE_PLATFORM === "photoshop") buildConfig.platform = "photoshop";
+    if (import.meta.env.VITE_PLATFORM === "photoshop" || import.meta.env.VITE_PLATFORM === "electron") {
+        buildConfig.platform = import.meta.env.VITE_PLATFORM;
+    }
+
+    let hasStandaloneExport = $derived(buildConfig.platform === "standalone-web" || buildConfig.platform === "electron");
+
+    function bytesToBase64(value) {
+        const bytes = value instanceof Uint8Array ? value : new Uint8Array(value);
+        let binary = "";
+        const chunkSize = 0x8000;
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+            binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+        }
+        return btoa(binary);
+    }
 
     function renderPreview() {
         if (imageEl && imageEl.complete && imageEl.naturalWidth) {
@@ -75,9 +90,22 @@
     }
 
     let imageExportType = $state("png");
-    function handleImageExport() {
+    async function handleImageExport() {
         if (!canvasEl) return;
         const outputURI = canvasEl.toDataURL("image/" + imageExportType);
+        if (buildConfig.platform === "electron") {
+            await saveElectronFile({
+                defaultPath: "colortheater-output." + imageExportType,
+                filters: [{
+                    name: imageExportType.toUpperCase(),
+                    extensions: imageExportType === "jpeg" ? ["jpg", "jpeg"] : [imageExportType],
+                }],
+                data: outputURI.split(",")[1],
+                base64: true,
+            });
+            return;
+        }
+
         const a = document.createElement("a");
         a.href = outputURI;
         a.download = "colortheater-output." + imageExportType;
@@ -86,8 +114,18 @@
 
     let lutGridSize = $state(33);
     let lutFormat = $state("cube");
-    function handleLutExport() {
+    async function handleLutExport() {
         const lut = (lutFormat === "icc") ? generateIccLUT(lutGridSize, gradeState) : generateCubeLUT(lutGridSize, gradeState);
+        if (buildConfig.platform === "electron") {
+            await saveElectronFile({
+                defaultPath: "colortheater-lut." + lutFormat,
+                filters: [{ name: lutFormat.toUpperCase(), extensions: [lutFormat] }],
+                data: typeof lut === "string" ? lut : bytesToBase64(lut),
+                base64: typeof lut !== "string",
+            });
+            return;
+        }
+
         const blob = new Blob([lut], { type: (lutFormat === "icc") ? "application/vnd.iccprofile" : "text/plain" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -133,7 +171,7 @@
 <ControlPanel />
 
 <div id="bottompanel">
-    {#if buildConfig.platform === "standalone"}
+    {#if hasStandaloneExport}
         <div style:display="inline-flex" style:margin="6px">
             <button onclick={handleImageExport}>Export Image</button>
             <select bind:value={imageExportType}>
@@ -164,7 +202,7 @@
     <div id="welcomescreen">
         <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: center;">
             <img src={bannerImg} draggable="false" width="420" style:max-width="90vw" alt="Color Theater" /> <br />
-            {#if buildConfig.platform === "standalone"}
+            {#if hasStandaloneExport}
                 <label class="button" style:padding="6px 14px">
                     Upload image
                     <input type="file" accept="image/*" onchange={handleFileUpload} style:display="none" />

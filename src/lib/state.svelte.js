@@ -85,11 +85,11 @@ export const previewRefs = {
 };
 
 /**
- * Build platform (standalone app vs. Photopea plugin vs. Photoshop plugin)
+ * Build platform (standalone web app vs. Electron app vs. Photopea plugin vs. Photoshop plugin)
  */
 export let buildConfig = $state({
-    /** @type {"standalone" | "photopea" | "photoshop"} */
-    platform: "standalone",
+    /** @type {"standalone-web" | "electron" | "photopea" | "photoshop"} */
+    platform: "standalone-web",
     /** @type {"yes" | "no"} */
     editing: "no",
 });

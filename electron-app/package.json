@@ -23,6 +23,7 @@
     },
     "files": [
         "main.js",
+        "preload.js",
         "app/**/*"
     ],
     "build": {
@@ -32,6 +33,7 @@
         },
         "files": [
             "main.js",
+            "preload.js",
             "app/**/*"
         ],
         "win": {

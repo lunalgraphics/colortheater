@@ -3,6 +3,7 @@
     import { gradeState, previewRefs, buildConfig } from "../../state.svelte";
     import renderEngine from "../../renderEngine";
     import { readMetadataLayer } from "../../utils/photopeaScripts.js";
+    import { saveElectronFile } from "../../utils/electronScripts.js";
 
     let open = $state(false);
 
@@ -51,8 +52,17 @@
         closeDropdown();
     }
 
-    function handleExportPreset() {
+    async function handleExportPreset() {
         const json = exportPreset(gradeState);
+        if (buildConfig.platform === "electron") {
+            await saveElectronFile({
+                defaultPath: "preset.ctpreset.json",
+                filters: [{ name: "Color Theater Preset", extensions: ["json"] }],
+                data: json,
+            });
+            return;
+        }
+
         const blob = new Blob([json], { type: "application/json" });
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
